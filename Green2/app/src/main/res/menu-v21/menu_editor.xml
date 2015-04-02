@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    tools:context=".EditorActivity">
+
+    <item
+        android:id="@+id/action_save"
+        android:title="@string/title_activity_save_image"
+        android:icon="@drawable/ic_action_save"
+        app:showAsAction="ifRoom"/>
+    <item
+        android:id="@+id/action_undo"
+        android:title="@string/undo"
+        android:icon="@drawable/ic_action_undo"
+        app:showAsAction="ifRoom"/>
+    <item
+        android:id="@+id/action_fullscreen"
+        android:title="@string/fullscreen"
+        android:icon="@drawable/ic_action_fullscreen_vector_animated"
+        app:showAsAction="ifRoom"
+        android:visible="@bool/use_large_ui"
+        android:enabled="@bool/use_large_ui"/>
+</menu>

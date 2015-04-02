@@ -1,0 +1,313 @@
+package com.hctord.green.document;
+
+import android.content.Context;
+import android.graphics.Point;
+import android.os.AsyncTask;
+import android.os.Parcel;
+import android.os.Parcelable;
+import android.support.v7.widget.CardView;
+import android.support.v7.widget.RecyclerView;
+import android.util.Log;
+
+import java.io.File;
+import java.io.FileFilter;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+
+import com.hctord.green.adapters.OpenDocumentAdapter;
+import com.hctord.green.util.Utils;
+
+public class DocumentManager {
+
+    private static DocumentManager singleton = null;
+
+    public static void initialize(Context context) {
+        singleton = new DocumentManager(context);
+    }
+
+    public static DocumentManager getDocumentManager() {
+        return singleton;
+    }
+
+    public static DocumentManager getDocumentManager(Context context) {
+        if (singleton == null)
+            initialize(context);
+        return singleton;
+    }
+
+    @Deprecated
+    private class ScanFilesTask extends AsyncTask<Object, String, List<PixelArtHandle>> {
+
+        public final FileFilter IMAGE_FILTER = new FileFilter() {
+            @Override
+            public boolean accept(File file) {
+                return file.getAbsolutePath().endsWith(".green")
+                        && !file.getAbsolutePath().startsWith("$");
+            }
+        };
+
+        private PostFileScannedListener postFileScannedListener;
+
+        public void setPostFileScannedListener(PostFileScannedListener listener) {
+            postFileScannedListener = listener;
+        }
+
+        @Override
+        protected List<PixelArtHandle> doInBackground(Object... args) {
+            List<PixelArtHandle> output = new ArrayList<PixelArtHandle>();
+            Context ctx = (Context)args[0];
+            File dir = ctx.getFilesDir();
+            File[] images = dir.listFiles(IMAGE_FILTER);
+
+            if (images != null) {
+                for (File image : images) {
+                    String filename, thumbnailFilename;
+                    Point dimensions;
+                    long size;
+                    FileInputStream fis = null;
+
+                    filename = image.getName();
+                    thumbnailFilename = image.getName().replace(".green", "_thumbnail.png");
+                    size = image.length();
+                    try {
+                        fis = ctx.openFileInput(filename);
+                        fis.read(new byte[8]);
+                        short[] dimarr;
+                        byte[] dimarrb = new byte[16];
+                        fis.read(dimarrb);
+                        dimarr = Utils.byteArrayToShortArray(dimarrb);
+                        dimensions = new Point(dimarr[0], dimarr[1]);
+                    }
+                    catch (IOException e) {
+                        continue;
+                    }
+                    finally {
+                        if (fis != null)
+                            try {
+                                fis.close();
+                            }
+                            catch (IOException e) {}
+                    }
+                    output.add(new PixelArtHandle(filename, thumbnailFilename, dimensions, size));
+                    publishProgress(filename);
+                }
+            }
+            return output;
+        }
+
+        @Override
+        protected void onProgressUpdate(String... filenames) {
+            Log.v("SCAN", String.format("Found file %s", filenames[0]));
+        }
+
+        @Override
+        protected void onPostExecute(List<PixelArtHandle> result) {
+            if (handles != null)
+                handles.addAll(result);
+            else
+                handles = result;
+            if (postFileScannedListener != null)
+                postFileScannedListener.onFilesScanned();
+        }
+    }
+
+    private List<OpenPixelArtInfo> openDocumentInfoList;
+    private List<PixelArt> openDocuments;
+    private List<PixelArtHandle> handles;
+    private Context context;
+    private ScanFilesTask scanFilesTask;
+    private ImageRenderer thumbRenderer;
+    private int newDocuments = 0;
+    private OpenDocumentAdapter openDocumentAdapter;
+
+    private DocumentManager(Context context) {
+        this.context = context;
+        scanFilesTask = new ScanFilesTask();
+        scanFilesTask.execute(context);
+        thumbRenderer = new ImageRenderer();
+        handles = new ArrayList<>();
+        openDocumentInfoList = new ArrayList<>();
+        openDocuments = new ArrayList<>();
+        openDocumentAdapter = new OpenDocumentAdapter(openDocumentInfoList);
+    }
+
+    public OpenPixelArtInfo createDocument(int w, int h) {
+        OpenPixelArtInfo handle = new OpenPixelArtInfo();
+        handle.filename = newDocuments > 0 ? String.format("Untitled %d", newDocuments) : "Untitled";
+        PixelArt pixelArt = new PixelArt(w, h);
+        openDocuments.add(pixelArt);
+        handle.openDocumentIndex = openDocuments.indexOf(pixelArt);
+        handle.artHashCode = pixelArt.hashCode();
+        openDocumentInfoList.add(handle);
+        ++newDocuments;
+        openDocumentAdapter.documentAdded();
+        return handle;
+    }
+
+    public void closeDocument(OpenPixelArtInfo info) {
+        closeDocument(info, false);
+    }
+
+    public void closeDocument(OpenPixelArtInfo info, boolean save) {
+        int index = openDocumentInfoList.indexOf(info);
+        openDocumentInfoList.remove(info);
+        if (save) {
+            saveDocument(info);
+        }
+        openDocuments.remove(info.openDocumentIndex);
+        openDocumentAdapter.documentClosed(index);
+    }
+
+    public OpenPixelArtInfo openDocument(String filename) {
+        OpenPixelArtInfo info = new OpenPixelArtInfo();
+        info.filename = filename;
+        PixelArt art;
+        try {
+            FileInputStream fis = context.openFileInput(filename);
+            art = new PixelArt(fis);
+            fis.close();
+        }
+        catch (IOException e) {
+            e.printStackTrace();
+            return null;
+        }
+        openDocuments.add(art);
+        info.openDocumentIndex = openDocuments.indexOf(art);
+        openDocumentInfoList.add(info);
+        openDocumentAdapter.documentAdded();
+        return info;
+    }
+
+    public void saveDocument(OpenPixelArtInfo info) {
+        PixelArt art = openDocuments.get(info.openDocumentIndex);
+        try {
+            FileOutputStream fos = context.openFileOutput(info.filename, Context.MODE_PRIVATE);
+            art.write(fos);
+            fos.close();
+        }
+        catch (IOException e) {
+            e.printStackTrace();
+        }
+        info.artHashCode = art.hashCode();
+    }
+
+    @Deprecated
+    public void invalidateHandles(PostFileScannedListener listener) {
+        handles.clear();
+        scanFilesTask.setPostFileScannedListener(listener);
+        scanFilesTask.execute(context);
+    }
+
+    public PixelArt getDocument(OpenPixelArtInfo info) {
+        PixelArt output = openDocuments.get(info.openDocumentIndex);
+        /*
+        if (output.hashCode() != info.artHashCode) {
+            // Hash code mismatch, reload the file.
+            try {
+                FileInputStream fis = context.openFileInput(info.filename);
+                output = new PixelArt(fis);
+                fis.close();
+            }
+            catch (IOException e) {
+                return null;
+            }
+            openDocuments.add(output);
+            info.artHashCode = output.hashCode();
+            info.openDocumentIndex = openDocuments.indexOf(output);
+        }*/
+        return output;
+    }
+
+    public void autosaveAll() {
+        for (OpenPixelArtInfo info : openDocumentInfoList) {
+            PixelArt doc = openDocuments.get(info.openDocumentIndex);
+            String filename = "$" + info.filename;
+            try {
+                FileOutputStream fos = context.openFileOutput(filename, Context.MODE_PRIVATE);
+                doc.write(fos);
+                fos.close();
+            }
+            catch (IOException e) {
+                Log.e("Autosave", "Failed to write file " + info.filename + ": " + e.getMessage());
+                e.printStackTrace();
+            }
+        }
+    }
+
+    public List<OpenPixelArtInfo> getOpenDocumentInfoList() {
+        return openDocumentInfoList;
+    }
+
+    @Deprecated
+    public List<PixelArtHandle> getHandles() {
+        return handles;
+    }
+
+    public Context getContext() {
+        return context;
+    }
+
+    public OpenDocumentAdapter getOpenDocumentAdapter() {
+        return openDocumentAdapter;
+    }
+
+    /**
+     *
+     */
+    public static class OpenPixelArtInfo implements Parcelable {
+        private int openDocumentIndex;
+        private String filename;
+        private int artHashCode;
+
+        private OpenPixelArtInfo() {}
+
+        private OpenPixelArtInfo(Parcel in) {
+            openDocumentIndex = in.readInt();
+            filename = in.readString();
+        }
+
+        public int getOpenDocumentIndex() {
+            return openDocumentIndex;
+        }
+
+        public String getFilename() {
+            return filename;
+        }
+
+        public void setFilename(String filename) {
+            this.filename = filename;
+        }
+
+        @Override
+        public int describeContents() {
+            return 0;
+        }
+
+        @Override
+        public void writeToParcel(Parcel out, int flags) {
+            out.writeInt(openDocumentIndex);
+            out.writeString(filename);
+        }
+
+        public static final Creator<OpenPixelArtInfo> CREATOR = new Creator<OpenPixelArtInfo>() {
+            @Override
+            public OpenPixelArtInfo createFromParcel(Parcel parcel) {
+                return new OpenPixelArtInfo(parcel);
+            }
+
+            @Override
+            public OpenPixelArtInfo[] newArray(int len) {
+                return new OpenPixelArtInfo[len];
+            }
+        };
+    }
+
+    @Deprecated
+    public static interface PostFileScannedListener {
+        public void onFilesScanned();
+    }
+
+}

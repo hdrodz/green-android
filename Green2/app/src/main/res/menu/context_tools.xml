@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/action_pencil"
+        android:title="@string/tool_pencil"/>
+    <item
+        android:id="@+id/action_eraser"
+        android:title="@string/tool_eraser"/>
+    <item
+        android:id="@+id/action_bucket"
+        android:title="@string/tool_fill"/>
+    <item
+        android:id="@+id/action_line"
+        android:title="@string/tool_line"/>
+    <item
+        android:id="@+id/action_rect"
+        android:title="@string/tool_rect"/>
+    <item
+        android:id="@+id/action_ellipse"
+        android:title="@string/tool_ellipse"/>
+</menu>

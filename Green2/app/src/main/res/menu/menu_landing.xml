@@ -1,0 +1,11 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    tools:context="com.hctord.green.LandingActivity">
+
+    <item android:id="@+id/action_new"
+        android:title="@string/title_activity_new_image"
+        android:icon="@drawable/ic_action_add_white"
+        app:showAsAction="ifRoom"/>
+
+</menu>

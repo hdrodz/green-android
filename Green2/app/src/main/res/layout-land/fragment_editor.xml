@@ -1,0 +1,56 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".EditorActivity$PlaceholderFragment">
+
+    <com.hctord.green.widget.PixelEditorView2
+        android:id="@+id/editor"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+
+    <LinearLayout
+        android:id="@+id/toolbar"
+        android:layout_width="48dp"
+        android:layout_height="match_parent"
+        android:elevation="10dp"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true"
+        android:background="#EEE"
+        android:orientation="vertical">
+        <ImageButton
+            style="?android:attr/buttonBarButtonStyle"
+            android:id="@+id/palette_button"
+            android:layout_height="0dp"
+            android:layout_width="match_parent"
+            android:layout_weight="1"
+            android:src="@drawable/ic_action_palette"
+            android:tint="#000"/>
+        <ImageButton
+            style="?android:attr/buttonBarButtonStyle"
+            android:id="@+id/tools_button"
+            android:layout_height="0dp"
+            android:layout_width="match_parent"
+            android:layout_weight="1"
+            android:src="@drawable/ic_tool_pencil_white"
+            android:tint="#000"/>
+        <ImageButton
+            style="?android:attr/buttonBarButtonStyle"
+            android:id="@+id/layers_button"
+            android:layout_height="0dp"
+            android:layout_width="match_parent"
+            android:layout_weight="1"
+            android:src="@drawable/ic_action_layers"
+            android:tint="#000"/>
+    </LinearLayout>
+
+    <ImageButton
+        android:layout_width="64dp"
+        android:layout_height="64dp"
+        android:elevation="5dp"
+        android:layout_alignParentTop="true"
+        android:layout_toLeftOf="@id/toolbar"
+        android:layout_toStartOf="@id/toolbar"
+        android:src="@drawable/ic_action_redo" />
+
+</RelativeLayout>

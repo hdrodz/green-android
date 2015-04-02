@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <color name="primary">#080</color>
+    <color name="primary_dark">#060</color>
+    <color name="accent">#084</color>
+    <color name="black_overlay">#66000000</color>
+    <color name="highlight">?android:attr/colorActivatedHighlight</color>
+
+</resources>

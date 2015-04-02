@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="palette_popup_offset_x">-72dp</dimen>
+    <dimen name="palette_popup_offset_y">-112dp</dimen>
+
+    <dimen name="popup_palette_height">296dp</dimen>
+</resources>

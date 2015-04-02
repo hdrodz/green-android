@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<animated-vector
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:drawable="@drawable/ic_action_fullscreen_vector">
+    <target
+        android:animation="@anim/rotate_180_clock"
+        android:name="top_left"/>
+    <target
+        android:animation="@anim/rotate_180_clock"
+        android:name="bottom_right"/>
+    <target
+        android:animation="@anim/rotate_180_counter"
+        android:name="top_right"/>
+    <target
+        android:animation="@anim/rotate_180_counter"
+        android:name="bottom_left"/>
+</animated-vector>

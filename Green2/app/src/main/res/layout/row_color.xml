@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="horizontal"
+    android:layout_width="match_parent"
+    android:layout_height="64dp">
+
+    <View
+        android:id="@+id/color"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:layout_margin="8dp"/>
+
+    <ImageButton
+        style="?android:buttonBarButtonStyle"
+        android:id="@+id/edit"
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:layout_margin="8dp"
+        android:src="@drawable/ic_action_tools"/>
+
+</LinearLayout>
