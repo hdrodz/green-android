@@ -89,6 +89,8 @@ public class EditorActivity extends ActionBarActivity {
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu_editor, menu);
+        if (callbacks != null)
+            callbacks.onMenuInflated(menu);
         return true;
     }
 
@@ -149,9 +151,6 @@ public class EditorActivity extends ActionBarActivity {
         public void clearCanvas();
         public void centerCanvas();
         public void saveFile(String filename);
-        public void loadFile(String filename);
-        public void newFile(int width, int height);
-        public void saveState();
         public void onMenuInflated(Menu menu);
         public void toggleFullscreen(MenuItem fullScreenItem);
     }

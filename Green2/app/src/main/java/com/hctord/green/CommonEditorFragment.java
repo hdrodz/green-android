@@ -5,6 +5,7 @@ import android.content.Context;
 import android.graphics.Point;
 import android.os.Bundle;
 import android.view.LayoutInflater;
+import android.view.Menu;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
@@ -123,32 +124,5 @@ public abstract class CommonEditorFragment
     }
 
     @Override
-    public void loadFile(String filename) {
-        try {
-            FileInputStream fis = getActivity().openFileInput(filename);
-            PixelArt art = new PixelArt(fis);
-            editorView.setTarget(art);
-            fis.close();
-        }
-        catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
-    @Override
-    public void newFile(int width, int height) {
-        editorView.setTarget(new PixelArt(new Point(width, height)));
-    }
-
-    @Override
-    public void saveState() {
-        try {
-            FileOutputStream fos = getActivity().openFileOutput("$" + token, Context.MODE_PRIVATE);
-            editorView.getTarget().write(fos);
-            fos.close();
-        }
-        catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
+    public void onMenuInflated(Menu menu) { }
 }

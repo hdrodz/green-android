@@ -38,97 +38,16 @@ public class DocumentManager {
         return singleton;
     }
 
-    @Deprecated
-    private class ScanFilesTask extends AsyncTask<Object, String, List<PixelArtHandle>> {
-
-        public final FileFilter IMAGE_FILTER = new FileFilter() {
-            @Override
-            public boolean accept(File file) {
-                return file.getAbsolutePath().endsWith(".green")
-                        && !file.getAbsolutePath().startsWith("$");
-            }
-        };
-
-        private PostFileScannedListener postFileScannedListener;
-
-        public void setPostFileScannedListener(PostFileScannedListener listener) {
-            postFileScannedListener = listener;
-        }
-
-        @Override
-        protected List<PixelArtHandle> doInBackground(Object... args) {
-            List<PixelArtHandle> output = new ArrayList<PixelArtHandle>();
-            Context ctx = (Context)args[0];
-            File dir = ctx.getFilesDir();
-            File[] images = dir.listFiles(IMAGE_FILTER);
-
-            if (images != null) {
-                for (File image : images) {
-                    String filename, thumbnailFilename;
-                    Point dimensions;
-                    long size;
-                    FileInputStream fis = null;
-
-                    filename = image.getName();
-                    thumbnailFilename = image.getName().replace(".green", "_thumbnail.png");
-                    size = image.length();
-                    try {
-                        fis = ctx.openFileInput(filename);
-                        fis.read(new byte[8]);
-                        short[] dimarr;
-                        byte[] dimarrb = new byte[16];
-                        fis.read(dimarrb);
-                        dimarr = Utils.byteArrayToShortArray(dimarrb);
-                        dimensions = new Point(dimarr[0], dimarr[1]);
-                    }
-                    catch (IOException e) {
-                        continue;
-                    }
-                    finally {
-                        if (fis != null)
-                            try {
-                                fis.close();
-                            }
-                            catch (IOException e) {}
-                    }
-                    output.add(new PixelArtHandle(filename, thumbnailFilename, dimensions, size));
-                    publishProgress(filename);
-                }
-            }
-            return output;
-        }
-
-        @Override
-        protected void onProgressUpdate(String... filenames) {
-            Log.v("SCAN", String.format("Found file %s", filenames[0]));
-        }
-
-        @Override
-        protected void onPostExecute(List<PixelArtHandle> result) {
-            if (handles != null)
-                handles.addAll(result);
-            else
-                handles = result;
-            if (postFileScannedListener != null)
-                postFileScannedListener.onFilesScanned();
-        }
-    }
-
     private List<OpenPixelArtInfo> openDocumentInfoList;
     private List<PixelArt> openDocuments;
-    private List<PixelArtHandle> handles;
     private Context context;
-    private ScanFilesTask scanFilesTask;
     private ImageRenderer thumbRenderer;
     private int newDocuments = 0;
     private OpenDocumentAdapter openDocumentAdapter;
 
     private DocumentManager(Context context) {
         this.context = context;
-        scanFilesTask = new ScanFilesTask();
-        scanFilesTask.execute(context);
         thumbRenderer = new ImageRenderer();
-        handles = new ArrayList<>();
         openDocumentInfoList = new ArrayList<>();
         openDocuments = new ArrayList<>();
         openDocumentAdapter = new OpenDocumentAdapter(openDocumentInfoList);
@@ -194,13 +113,6 @@ public class DocumentManager {
         info.artHashCode = art.hashCode();
     }
 
-    @Deprecated
-    public void invalidateHandles(PostFileScannedListener listener) {
-        handles.clear();
-        scanFilesTask.setPostFileScannedListener(listener);
-        scanFilesTask.execute(context);
-    }
-
     public PixelArt getDocument(OpenPixelArtInfo info) {
         PixelArt output = openDocuments.get(info.openDocumentIndex);
         /*
@@ -239,11 +151,6 @@ public class DocumentManager {
 
     public List<OpenPixelArtInfo> getOpenDocumentInfoList() {
         return openDocumentInfoList;
-    }
-
-    @Deprecated
-    public List<PixelArtHandle> getHandles() {
-        return handles;
     }
 
     public Context getContext() {
