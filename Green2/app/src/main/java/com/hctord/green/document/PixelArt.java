@@ -34,7 +34,7 @@ public class PixelArt implements Parcelable {
     };
 
     private Point size;
-    private List<byte[]> layers;
+    private List<byte[]> frames;
     private List<Integer> palette;
 
     public PixelArt(int width, int height) {
@@ -47,7 +47,7 @@ public class PixelArt implements Parcelable {
         for (int color : DEFAULT_PALETTE) {
             palette.add(color);
         }
-        layers = new ArrayList<byte[]>();
+        frames = new ArrayList<byte[]>();
         addLayer();
     }
 
@@ -64,11 +64,11 @@ public class PixelArt implements Parcelable {
             this.palette.add(color);
         }
         int layerCount = in.readInt();
-        layers = new ArrayList<byte[]>(layerCount);
+        frames = new ArrayList<byte[]>(layerCount);
         for (int i = 0; i < layerCount; ++i) {
             byte[] layer = new byte[size.x * size.y];
             in.readByteArray(layer);
-            layers.add(layer);
+            frames.add(layer);
         }
     }
 
@@ -81,21 +81,21 @@ public class PixelArt implements Parcelable {
     public int getHeight() { return size.y; }
 
     public void addLayer() {
-        layers.add(new byte[size.y * size.x]);
+        frames.add(new byte[size.y * size.x]);
     }
 
     public List<Integer> getPalette() {
         return palette;
     }
 
-    public List<byte[]> getLayers() {
-        return layers;
+    public List<byte[]> getFrames() {
+        return frames;
     }
 
     public int getMostUsedColor() {
         SparseIntArray colors = new SparseIntArray();
-        for (byte[] layer : layers) {
-            for (byte pixel : layer) {
+        for (byte[] frame : frames) {
+            for (byte pixel : frame) {
                 if (pixel == 0)
                     continue;
                 if (colors.get(pixel, -1) == -1) {
@@ -116,8 +116,37 @@ public class PixelArt implements Parcelable {
         return palette.get(mostFrequentIndex) | 0xFF000000;
     }
 
+    public int getAverageColor() {
+        long total_r = 0,
+             total_g = 0,
+             total_b = 0;
+        int nontransparent_pixels = 0;
+
+        for (byte[] frame : frames) {
+            for (byte pixel : frame) {
+                if (pixel == 0)
+                    continue;
+                int rgb = palette.get(pixel);
+                int r, g, b;
+                r = (rgb & 0x00FF0000) >> 16;
+                g = (rgb & 0x0000FF00) >> 8;
+                b = (rgb & 0x000000FF);
+
+                total_r += r;
+                total_g += g;
+                total_b += b;
+                ++nontransparent_pixels;
+            }
+        }
+        int r = (int)(total_r / nontransparent_pixels);
+        int g = (int)(total_g / nontransparent_pixels);
+        int b = (int)(total_b / nontransparent_pixels);
+
+        return 0xFF000000 | (r << 16) | (g << 8) | b;
+    }
+
     public byte[] getLayer(int position) {
-        return layers.get(position);
+        return frames.get(position);
     }
 
     public void write(OutputStream stream) throws IOException {
@@ -131,8 +160,8 @@ public class PixelArt implements Parcelable {
         palette.toArray(out);
         stream.write(Utils.intArrayToByteArray(out));
         // Write the image layer data
-        stream.write(layers.size());
-        for (byte[] layer : layers) {
+        stream.write(frames.size());
+        for (byte[] layer : frames) {
             stream.write(layer);
         }
     }
@@ -168,11 +197,11 @@ public class PixelArt implements Parcelable {
 
         // Read the layer data
         b = (byte)stream.read();
-        this.layers = new ArrayList<byte[]>(b);
+        this.frames = new ArrayList<byte[]>(b);
         for (int i = 0; i < b; i++) {
             buffer = new byte[size.x * size.y];
             stream.read(buffer);
-            this.layers.add(buffer);
+            this.frames.add(buffer);
         }
     }
 
@@ -194,8 +223,8 @@ public class PixelArt implements Parcelable {
         int[] paletteAsArray = Utils.toSimpleTypeArray(palette);
         out.writeInt(paletteAsArray.length);
         out.writeIntArray(paletteAsArray);
-        out.writeInt(layers.size());
-        for (byte[] layer : layers) {
+        out.writeInt(frames.size());
+        for (byte[] layer : frames) {
             out.writeByteArray(layer);
         }
     }
