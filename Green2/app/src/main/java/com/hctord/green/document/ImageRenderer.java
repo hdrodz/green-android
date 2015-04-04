@@ -93,7 +93,7 @@ public class ImageRenderer {
     }
 
     public void updateCacheFrom(int startingLayer) {
-        updateCache(startingLayer, src.getLayers().size() - 1);
+        updateCache(startingLayer, src.getFrames().size() - 1);
     }
 
     public void updateCache(int layer) {
@@ -144,7 +144,7 @@ public class ImageRenderer {
         cache.getPixels(pixels, 0, src.getWidth(), 0, 0, src.getWidth(), src.getHeight());
 
         // Draw through the image layers
-        for (int i = startingLayer; i < src.getLayers().size(); i++) {
+        for (int i = startingLayer; i < src.getFrames().size(); i++) {
             byte[] layer = src.getLayer(i);
             // Update the specified pixels
             for (Point pt : which) {

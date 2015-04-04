@@ -46,12 +46,12 @@ public class GeneralEditHistoryEntry implements HistoryEntry {
 
     @Override
     public void undo(PixelArt art) {
-        art.getLayers().set(index, oldLayer);
+        art.getFrames().set(index, oldLayer);
     }
 
     @Override
     public void redo(PixelArt art) {
-        art.getLayers().set(index, newLayer);
+        art.getFrames().set(index, newLayer);
     }
 
     @Override

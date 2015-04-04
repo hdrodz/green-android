@@ -41,15 +41,15 @@ public class BaseImageHistoryEntry implements HistoryEntry {
         PixelArt pa = (PixelArt) args[0];
         size = pa.getSize();
         if (firstInit) {
-            baseImage = pa.getLayers().subList(0, pa.getLayers().size());
+            baseImage = pa.getFrames().subList(0, pa.getFrames().size());
         }
     }
 
     @Override
     public void undo(PixelArt art) {
-        art.getLayers().clear();
+        art.getFrames().clear();
         for (byte[] layer : baseImage)
-            art.getLayers().add(layer);
+            art.getFrames().add(layer);
     }
 
     @Override

@@ -3,6 +3,7 @@ package com.hctord.green.util;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.graphics.Color;
 import android.graphics.Point;
 import android.graphics.PointF;
 
@@ -243,5 +244,12 @@ public final class Utils {
               gf = g / 255.f,
               bf = b / 255.f;
         return 0.2126f * rf + 0.7152f * gf + 0.0722f * bf;
+    }
+
+    private static float[] hsv = new float[3];
+    public static int maxSaturation(int rgb) {
+        Color.colorToHSV(rgb, hsv);
+        hsv[1] = 1;
+        return Color.HSVToColor(hsv);
     }
 }

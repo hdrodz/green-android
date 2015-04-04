@@ -21,7 +21,7 @@ public class HistoryManager {
     public HistoryManager(PixelArt source, int layer) {
         history = new SparseArray<List<byte[]>>();
         historySteps = new SparseIntArray();
-        int layerCount = source.getLayers().size();
+        int layerCount = source.getFrames().size();
         for (int i = 0; i < layerCount; i++) {
             history.put(i, new ArrayList<byte[]>(MAX_HISTORY_STEPS));
             history.get(i).add(source.getLayer(i).clone());

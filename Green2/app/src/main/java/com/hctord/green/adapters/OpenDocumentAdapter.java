@@ -23,7 +23,9 @@ import java.util.List;
 
 /**
 * Created by HéctorD on 11/28/2014.
+ * @deprecated Whatever, manage open documents with Overview.
 */
+@Deprecated
 public class OpenDocumentAdapter extends RecyclerView.Adapter<OpenDocumentAdapter.ViewHolder> {
 
     private List<DocumentManager.OpenPixelArtInfo> openDocuments;
@@ -32,7 +34,7 @@ public class OpenDocumentAdapter extends RecyclerView.Adapter<OpenDocumentAdapte
     public OpenDocumentAdapter(final List<DocumentManager.OpenPixelArtInfo> openDocuments) {
         this.openDocuments = openDocuments;
 
-        renderedDocuments = new ArrayList<BitmapDrawable>();
+        renderedDocuments = new ArrayList<>();
         new RenderDocumentsTask().execute();
     }
 

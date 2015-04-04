@@ -123,7 +123,9 @@ public class PixelArtAdapter extends BaseAdapter {
                     handle.preview = renderedBitmap;
                     handle.previewAsDrawable = renderedAsDrawable;
                     handle.mostFrequentColor = pixelArt.getMostUsedColor();
-                    float lum = Utils.getLuminance(handle.mostFrequentColor);
+                    handle.averageColor = pixelArt.getAverageColor();
+                    handle.averageColorSat = Utils.maxSaturation(handle.averageColor);
+                    float lum = Utils.getLuminance(handle.averageColorSat);
                     if (lum > 0.5f) {
                         handle.textColor = 0xFF101010;
                     }
@@ -153,7 +155,7 @@ public class PixelArtAdapter extends BaseAdapter {
         };
 
         this.context = context;
-        files = new ArrayList<PixelArtHandle2>();
+        files = new ArrayList<>();
         scanFilesTask.execute((Void)null);
         callbacks = generalCallbacks;
     }
@@ -199,7 +201,7 @@ public class PixelArtAdapter extends BaseAdapter {
             vh.share.setTag(position);
             vh.share.setOnClickListener(SHARE_BUTTON_LISTENER);
 
-            vh.preview.setTag(new Pair<Integer, ImageView>(position, vh.thumbnail));
+            vh.preview.setTag(new Pair<>(position, vh.thumbnail));
             vh.preview.setOnClickListener(PREVIEW_BUTTON_LISTENER);
 
             vh.thumbnail.setTag(position);
@@ -215,7 +217,7 @@ public class PixelArtAdapter extends BaseAdapter {
 
         // Temporary fix for bug in CardView
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            vh.cardView.setBackgroundColor(handle.mostFrequentColor);
+            vh.cardView.setBackgroundColor(handle.averageColorSat);
             vh.filename.setTextColor(handle.textColor);
             vh.more.setColorFilter(handle.textColor);
             vh.share.setColorFilter(handle.textColor);
@@ -277,6 +279,8 @@ public class PixelArtAdapter extends BaseAdapter {
         private Bitmap preview;
         private BitmapDrawable previewAsDrawable;
         private int mostFrequentColor;
+        private int averageColor;
+        private int averageColorSat;
         private int textColor;
 
         private PixelArtHandle2() {}
@@ -287,6 +291,8 @@ public class PixelArtAdapter extends BaseAdapter {
             byte[] image = new byte[len];
             in.readByteArray(image);
             mostFrequentColor = in.readInt();
+            averageColor = in.readInt();
+            averageColorSat = in.readInt();
             textColor = in.readInt();
 
             preview = BitmapFactory.decodeByteArray(image, 0, image.length);
@@ -330,6 +336,8 @@ public class PixelArtAdapter extends BaseAdapter {
             out.writeInt(compressedImage.length);
             out.writeByteArray(compressedImage);
             out.writeInt(mostFrequentColor);
+            out.writeInt(averageColor);
+            out.writeInt(averageColorSat);
             out.writeInt(textColor);
         }
 

@@ -1,7 +1,5 @@
 package com.hctord.green;
 
-import com.hctord.green.adapters.PixelArtAdapter;
-
 import android.annotation.TargetApi;
 import android.content.Intent;
 import android.os.Build;
@@ -9,6 +7,8 @@ import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
 import android.view.MenuItem;
 import android.widget.ImageView;
+
+import com.hctord.green.adapters.PixelArtAdapter;
 
 
 /**

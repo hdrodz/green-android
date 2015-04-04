@@ -1,9 +1,7 @@
 package com.hctord.green.adapters;
 
 import android.content.Context;
-import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
-import android.text.Layout;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -42,7 +40,7 @@ public class LayerAdapter extends BaseAdapter {
 
         visibleLayers = new ArrayList<Boolean>();
 
-        for (int i = 0; i < pixelArt.getLayers().size(); ++i) {
+        for (int i = 0; i < pixelArt.getFrames().size(); ++i) {
             renderer.updateCache(i);
             BitmapDrawable bd = new BitmapDrawable(context.getResources(), renderer.copyCache());
             bd.setDither(false);
@@ -76,7 +74,7 @@ public class LayerAdapter extends BaseAdapter {
     public void invalidateLayers() {
         rendererCache.clear();
 
-        for (int i = 0; i < pixelArt.getLayers().size(); ++i) {
+        for (int i = 0; i < pixelArt.getFrames().size(); ++i) {
             renderer.updateCache(i);
             BitmapDrawable bd = new BitmapDrawable(context.getResources(), renderer.copyCache());
             bd.setDither(false);
@@ -90,7 +88,7 @@ public class LayerAdapter extends BaseAdapter {
 
     @Override
     public int getCount() {
-        return pixelArt.getLayers().size();
+        return pixelArt.getFrames().size();
     }
 
     @Override

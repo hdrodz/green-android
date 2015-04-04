@@ -150,6 +150,7 @@ public class EditorActivity extends ActionBarActivity {
     public static interface Callbacks {
         public void clearCanvas();
         public void centerCanvas();
+        public void saveFile();
         public void saveFile(String filename);
         public void onMenuInflated(Menu menu);
         public void toggleFullscreen(MenuItem fullScreenItem);

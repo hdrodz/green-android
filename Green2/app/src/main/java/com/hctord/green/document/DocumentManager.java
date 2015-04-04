@@ -54,6 +54,7 @@ public class DocumentManager {
     }
 
     public OpenPixelArtInfo createDocument(int w, int h) {
+        // Create and populate new handle entry
         OpenPixelArtInfo handle = new OpenPixelArtInfo();
         handle.filename = newDocuments > 0 ? String.format("Untitled %d", newDocuments) : "Untitled";
         PixelArt pixelArt = new PixelArt(w, h);
@@ -111,6 +112,21 @@ public class DocumentManager {
             e.printStackTrace();
         }
         info.artHashCode = art.hashCode();
+    }
+
+    public void updateOpenInfo(OpenPixelArtInfo newInfo) {
+        OpenPixelArtInfo oldInfo = null;
+        for (OpenPixelArtInfo info : openDocumentInfoList) {
+            if (info.getOpenDocumentIndex() == newInfo.getOpenDocumentIndex()) {
+                oldInfo = info;
+                break;
+            }
+        }
+
+        if (oldInfo == null)
+            throw new IllegalArgumentException("Nothing to update!");
+
+        oldInfo.filename = newInfo.filename;
     }
 
     public PixelArt getDocument(OpenPixelArtInfo info) {

@@ -112,6 +112,7 @@ public abstract class CommonEditorFragment
 
     @Override
     public void saveFile(String filename) {
+        /*
         try {
             FileOutputStream fos = getActivity().openFileOutput(filename, Context.MODE_PRIVATE);
             editorView.getTarget().write(fos);
@@ -120,7 +121,15 @@ public abstract class CommonEditorFragment
         catch (IOException e) {
             e.printStackTrace();
         }
-        Toast.makeText(getActivity(), "Image saved", Toast.LENGTH_SHORT).show();
+        Toast.makeText(getActivity(), "Image saved", Toast.LENGTH_SHORT).show();*/
+        // *snip*
+
+
+    }
+
+    @Override
+    public void saveFile() {
+
     }
 
     @Override

@@ -5,8 +5,6 @@ import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.ActivityOptionsCompat;
 import android.support.v7.app.ActionBarActivity;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -52,10 +50,6 @@ public class LandingActivity
         documentManager = DocumentManager.getDocumentManager(getApplicationContext());
         adapter = new PixelArtAdapter(this, null, onFinishCallback, this);
         gridView.setAdapter(adapter);
-
-        RecyclerView openDocumentsView = (RecyclerView) findViewById(R.id.open_grid);
-        openDocumentsView.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
-        openDocumentsView.setAdapter(documentManager.getOpenDocumentAdapter());
 
         setupToolbar();
     }
