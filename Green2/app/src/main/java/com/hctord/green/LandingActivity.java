@@ -54,6 +54,15 @@ public class LandingActivity
         setupToolbar();
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+        if (documentManager.isDirty()) {
+            adapter.refreshFilesList();
+            documentManager.clearDirty();
+        }
+    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {

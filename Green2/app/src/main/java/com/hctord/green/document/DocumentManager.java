@@ -44,6 +44,7 @@ public class DocumentManager {
     private ImageRenderer thumbRenderer;
     private int newDocuments = 0;
     private OpenDocumentAdapter openDocumentAdapter;
+    private boolean isDirty = false;
 
     private DocumentManager(Context context) {
         this.context = context;
@@ -51,6 +52,14 @@ public class DocumentManager {
         openDocumentInfoList = new ArrayList<>();
         openDocuments = new ArrayList<>();
         openDocumentAdapter = new OpenDocumentAdapter(openDocumentInfoList);
+    }
+
+    public boolean isDirty() {
+        return isDirty;
+    }
+
+    public void clearDirty() {
+        isDirty = false;
     }
 
     public OpenPixelArtInfo createDocument(int w, int h) {
@@ -112,6 +121,7 @@ public class DocumentManager {
             e.printStackTrace();
         }
         info.artHashCode = art.hashCode();
+        isDirty = true;
     }
 
     public void updateOpenInfo(OpenPixelArtInfo newInfo) {
@@ -127,6 +137,10 @@ public class DocumentManager {
             throw new IllegalArgumentException("Nothing to update!");
 
         oldInfo.filename = newInfo.filename;
+    }
+
+    public void pushChanges(OpenPixelArtInfo info, PixelArt changes) {
+        openDocuments.set(info.openDocumentIndex, changes);
     }
 
     public PixelArt getDocument(OpenPixelArtInfo info) {

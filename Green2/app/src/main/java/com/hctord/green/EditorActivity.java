@@ -29,6 +29,7 @@ public class EditorActivity extends ActionBarActivity {
     private Callbacks callbacks;
     private static Bitmap ICON = null;
     private String filename;
+    private DocumentManager.OpenPixelArtInfo handle;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -40,7 +41,7 @@ public class EditorActivity extends ActionBarActivity {
         // Get the intent that is associated with the launching of this activity.
         Intent intent = getIntent();
         // Get the handle that points to the currently open document.
-        DocumentManager.OpenPixelArtInfo handle = intent.getParcelableExtra(CommonEditorFragment.ARG_HANDLE);
+        handle = intent.getParcelableExtra(CommonEditorFragment.ARG_HANDLE);
         filename = handle.getFilename();
         // Title string
         String title = filename.replace(".green", "");
@@ -121,7 +122,8 @@ public class EditorActivity extends ActionBarActivity {
                                     int color = getResources().getColor(R.color.primary);
                                     setTaskDescription(new ActivityManager.TaskDescription(filename.replace(".green", ""), ICON, color));
                                 }
-                                callbacks.saveFile(filename);
+
+                                callbacks.saveFile(handle, filename);
                                 dialog.dismiss();
                             }
                         })
@@ -135,7 +137,7 @@ public class EditorActivity extends ActionBarActivity {
                 saveDialog.show();
             }
             else {
-                callbacks.saveFile(filename);
+                callbacks.saveFile(handle);
             }
             return true;
         }
@@ -150,8 +152,8 @@ public class EditorActivity extends ActionBarActivity {
     public static interface Callbacks {
         public void clearCanvas();
         public void centerCanvas();
-        public void saveFile();
-        public void saveFile(String filename);
+        public void saveFile(DocumentManager.OpenPixelArtInfo info);
+        public void saveFile(DocumentManager.OpenPixelArtInfo info, String filename);
         public void onMenuInflated(Menu menu);
         public void toggleFullscreen(MenuItem fullScreenItem);
     }

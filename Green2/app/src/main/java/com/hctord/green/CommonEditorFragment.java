@@ -36,10 +36,12 @@ public abstract class CommonEditorFragment
     private int toolId = R.id.action_pencil;
     private PixelEditorView2 editorView;
     private String token;
+    private DocumentManager documentManager;
 
     protected CommonEditorFragment(int layoutResId) {
         this.layoutResId = layoutResId;
         token = Long.toString(System.currentTimeMillis());
+        documentManager = DocumentManager.getDocumentManager();
     }
 
     protected final PixelEditorView2 getEditorView() {
@@ -111,7 +113,7 @@ public abstract class CommonEditorFragment
     }
 
     @Override
-    public void saveFile(String filename) {
+    public void saveFile(DocumentManager.OpenPixelArtInfo info, String filename) {
         /*
         try {
             FileOutputStream fos = getActivity().openFileOutput(filename, Context.MODE_PRIVATE);
@@ -124,12 +126,15 @@ public abstract class CommonEditorFragment
         Toast.makeText(getActivity(), "Image saved", Toast.LENGTH_SHORT).show();*/
         // *snip*
 
-
+        info.setFilename(filename);
+        documentManager.updateOpenInfo(info);
+        saveFile(info);
     }
 
     @Override
-    public void saveFile() {
-
+    public void saveFile(DocumentManager.OpenPixelArtInfo info) {
+        documentManager.pushChanges(info, editorView.getTarget());
+        documentManager.saveDocument(info);
     }
 
     @Override
