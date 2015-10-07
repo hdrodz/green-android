@@ -48,6 +48,7 @@ public class PixelEditorView2
     private Brush brush;
     private boolean isDrawing;
     private byte storedColor;
+    private int editingFrame;
     private boolean drawGrid = true;
     private OnEditListener onEditListener;
 
@@ -58,6 +59,7 @@ public class PixelEditorView2
     private PointF actualOffset;
     private PointF modifiedOffset;
     private float zoom;
+    private float scaleFactor;
 
     // Render variables
 
@@ -65,9 +67,13 @@ public class PixelEditorView2
     private Paint gridPaint;
     private Paint borderPaint;
     private Paint checkerPaint;
+    private Paint prevFramePaint;
     private Bitmap rendered;
     private Bitmap edit;
+    private Bitmap prevFrame;
     private ImageRenderer targetRenderer;
+    private ImageRenderer prevFrameRenderer;
+    private boolean lightBoxEnabled = false;
 
     // Manipulation variables
 
@@ -89,15 +95,15 @@ public class PixelEditorView2
         w = actualSize.width();
         h = actualSize.height();
         float diffX, diffY;
-        diffX = w * zoom / 2;
-        diffY = h * zoom / 2;
+        diffX = w * zoom / 2 * scaleFactor;
+        diffY = h * zoom / 2 * scaleFactor;
 
-        modifiedOffset.set(actualOffset.x * zoom, actualOffset.y * zoom);
+        modifiedOffset.set(actualOffset.x * zoom * scaleFactor, actualOffset.y * zoom * scaleFactor);
         modifiedSize.set(
-                centerX + modifiedOffset.x + actualSize.left * zoom - diffX,
-                centerY + modifiedOffset.y + actualSize.top * zoom - diffY,
-                centerX + modifiedOffset.x + actualSize.right * zoom - diffX,
-                centerY + modifiedOffset.y + actualSize.bottom * zoom - diffY
+                centerX + modifiedOffset.x + actualSize.left * zoom * scaleFactor - diffX,
+                centerY + modifiedOffset.y + actualSize.top * zoom * scaleFactor - diffY,
+                centerX + modifiedOffset.x + actualSize.right * zoom * scaleFactor - diffX,
+                centerY + modifiedOffset.y + actualSize.bottom * zoom * scaleFactor - diffY
         );
         invalidate();
     }
@@ -106,6 +112,9 @@ public class PixelEditorView2
         super(context, attrs);
 
         Resources res = context.getResources();
+
+        editingFrame = 0;
+        scaleFactor = context.getResources().getDisplayMetrics().density;
 
         actualSize = new RectF();
         modifiedSize = new RectF();
@@ -128,18 +137,26 @@ public class PixelEditorView2
         borderPaint.setColor(Color.BLACK);
         borderPaint.setStrokeWidth(4);
 
+        prevFramePaint = new Paint();
+        prevFramePaint.setAntiAlias(false);
+        prevFramePaint.setAlpha(127);
+
         scaleGestureDetector = new ScaleGestureDetector(context, this);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT)
             scaleGestureDetector.setQuickScaleEnabled(false);
         gestureDetector = new GestureDetector(context, this);
 
         targetRenderer = new ImageRenderer();
+        prevFrameRenderer = new ImageRenderer();
         setTarget(new PixelArt(32, 32));
-        brush = new Freeform(this, 0, (byte)1);
+        brush = new Freeform(this, editingFrame, (byte)1);
     }
 
     public void invalidateRenderCache() {
-        targetRenderer.updateCache();
+        targetRenderer.updateCache(editingFrame);
+        if (editingFrame > 0 && lightBoxEnabled) {
+            prevFrameRenderer.updateCache(editingFrame - 1);
+        }
     }
 
     public PixelArt getTarget() {
@@ -154,12 +171,37 @@ public class PixelEditorView2
         this.drawGrid = drawGrid;
     }
 
+    public boolean isLightBoxEnabled() {
+        return lightBoxEnabled;
+    }
+
+    public void setLightBoxEnabled(boolean lightBoxEnabled) {
+        this.lightBoxEnabled = lightBoxEnabled;
+        invalidate();
+    }
+
+    public int getEditingFrame() {
+        return editingFrame;
+    }
+
+    public void setEditingFrame(int editingFrame) {
+        this.editingFrame = editingFrame;
+        invalidateRenderCache();
+        brush.setFrame(editingFrame);
+    }
+
+    public void addFrame() {
+        target.addFrame();
+    }
+
     public void setTarget(PixelArt target) {
         this.target = target;
         zoom = 16;
         targetRenderer.switchSource(target);
+        prevFrameRenderer.switchSource(target);
         rendered = targetRenderer.getCache();
         edit = targetRenderer.getEditCache();
+        prevFrame = prevFrameRenderer.getCache();
         actualSize.set(0, 0, target.getWidth(), target.getHeight());
         if (brush != null)
             brush.refresh();
@@ -207,7 +249,7 @@ public class PixelEditorView2
     }
 
     public void commitChanges() {
-        targetRenderer.updateCache();
+        targetRenderer.updateCache(editingFrame);
         targetRenderer.discardEditCache();
         invalidate();
         if (onEditListener != null)
@@ -246,10 +288,10 @@ public class PixelEditorView2
                     coords = new MotionEvent.PointerCoords();
                     event.getPointerCoords(pointerIndex, coords);
 
-                    targetRenderer.createEditCache(0);
+                    targetRenderer.createEditCache(editingFrame);
 
-                    ex = (int)((coords.x - (width - rWidth) / 2 - modifiedOffset.x) / zoom);
-                    ey = (int)((coords.y - (height - rHeight) / 2 - modifiedOffset.y) / zoom);
+                    ex = (int)((coords.x - (width - rWidth) / 2 - modifiedOffset.x) / (zoom * scaleFactor));
+                    ey = (int)((coords.y - (height - rHeight) / 2 - modifiedOffset.y) / (zoom * scaleFactor));
 
                     brush.touchStart(new Point(ex, ey));
 
@@ -262,8 +304,8 @@ public class PixelEditorView2
                         coords = new MotionEvent.PointerCoords();
                         event.getPointerCoords(pointerIndex, coords);
 
-                        ex = (int) ((coords.x - (width - rWidth) / 2 - modifiedOffset.x) / zoom);
-                        ey = (int) ((coords.y - (height - rHeight) / 2 - modifiedOffset.y) / zoom);
+                        ex = (int) ((coords.x - (width - rWidth) / 2 - modifiedOffset.x) / (zoom * scaleFactor));
+                        ey = (int) ((coords.y - (height - rHeight) / 2 - modifiedOffset.y) / (zoom * scaleFactor));
 
                         brush.touchDelta(new Point(ex, ey));
 
@@ -280,8 +322,8 @@ public class PixelEditorView2
                         coords = new MotionEvent.PointerCoords();
                         event.getPointerCoords(pointerIndex, coords);
 
-                        ex = (int) ((coords.x - (width - rWidth) / 2 - modifiedOffset.x) / zoom);
-                        ey = (int) ((coords.y - (height - rHeight) / 2 - modifiedOffset.y) / zoom);
+                        ex = (int) ((coords.x - (width - rWidth) / 2 - modifiedOffset.x) / (zoom * scaleFactor));
+                        ey = (int) ((coords.y - (height - rHeight) / 2 - modifiedOffset.y) / (zoom * scaleFactor));
 
                         brush.touchEnd(new Point(ex, ey));
 
@@ -302,6 +344,9 @@ public class PixelEditorView2
         canvas.drawRect(0, 0, getWidth(), getHeight(), checkerPaint);
 
         canvas.drawRect(modifiedSize, borderPaint);
+        if (lightBoxEnabled && editingFrame > 0) {
+            canvas.drawBitmap(prevFrame, null, modifiedSize, prevFramePaint);
+        }
         canvas.drawBitmap(rendered, null, modifiedSize, previewPaint);
 
         if (isDrawing) {
@@ -313,10 +358,10 @@ public class PixelEditorView2
             float sx = modifiedSize.left, sy = modifiedSize.top,
                   ex = modifiedSize.right, ey = modifiedSize.bottom;
             for (int x = 1; x < w; ++x) {
-                canvas.drawLine(sx + x * zoom, sy, sx + x * zoom, ey, gridPaint);
+                canvas.drawLine(sx + x * zoom * scaleFactor, sy, sx + x * zoom * scaleFactor, ey, gridPaint);
             }
             for (int y = 1; y < h; ++y) {
-                canvas.drawLine(sx, sy + y * zoom, ex, sy + y * zoom, gridPaint);
+                canvas.drawLine(sx, sy + y * zoom * scaleFactor, ex, sy + y * zoom * scaleFactor, gridPaint);
             }
         }
     }
@@ -368,7 +413,7 @@ public class PixelEditorView2
     public boolean onScroll(MotionEvent e1, MotionEvent e2, float dx, float dy) {
         if (e2.getPointerCount() >= 2) {
             modifiedOffset.offset(-dx, -dy);
-            actualOffset.offset(-dx / zoom, -dy / zoom);
+            actualOffset.offset(-dx / (zoom * scaleFactor), -dy / (zoom * scaleFactor));
             if (isDrawing) {
                 brush.cancel();
                 isDrawing = false;
@@ -395,7 +440,7 @@ public class PixelEditorView2
     //
     ////////////////////////////////////////////////////////////////////////
 
-    public static enum BrushType {
+    public enum BrushType {
         FREEFORM,
         ERASER,
         FILL,
@@ -404,8 +449,8 @@ public class PixelEditorView2
         ELLIPSE
     }
 
-    public static interface OnEditListener {
-        public void onPreEdit();
-        public void onEdit();
+    public interface OnEditListener {
+        void onPreEdit();
+        void onEdit();
     }
 }

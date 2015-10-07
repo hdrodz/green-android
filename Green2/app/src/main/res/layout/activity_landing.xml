@@ -53,12 +53,18 @@
         android:text="Saved Documents"/>-->
 
 
-    <GridView
+    <!--<GridView
         android:id="@+id/grid"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_below="@id/toolbar"
-        android:numColumns="@integer/column_count"/>
+        android:numColumns="@integer/column_count"/>-->
+
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/grid"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@id/toolbar"/>
 
     <!--<com.hctord.green.widget.CheckableColorView
         android:layout_width="match_parent"

@@ -6,123 +6,140 @@
     <com.hctord.green.widget.PixelEditorView2
         android:id="@+id/editor"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"/>
+        android:layout_height="match_parent" />
 
 
     <LinearLayout
         android:id="@+id/palette_panel"
-        android:background="#EEE"
-        android:elevation="10dp"
         android:layout_width="114dp"
         android:layout_height="match_parent"
+        android:background="#EEE"
+        android:elevation="10dp"
         android:orientation="vertical"
+        android:paddingEnd="0dp"
         android:paddingLeft="48dp"
         android:paddingRight="0dp"
-        android:paddingStart="48dp"
-        android:paddingEnd="0dp">
+        android:paddingStart="48dp">
+
         <ImageButton
             android:id="@+id/add_color"
             android:layout_width="match_parent"
             android:layout_height="64dp"
-            android:src="@drawable/ic_action_add_white"
             android:background="?attr/actionBarItemBackground"
-            android:tint="?attr/colorPrimaryDark"/>
+            android:src="@drawable/ic_action_add_white"
+            android:tint="?attr/colorPrimaryDark" />
+
         <ListView
             android:id="@+id/palette_list"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:choiceMode="singleChoice"/>
+            android:choiceMode="singleChoice" />
 
     </LinearLayout>
 
     <LinearLayout
         android:id="@+id/toolbox_panel"
-        android:background="#EEE"
-        android:elevation="15dp"
         android:layout_width="48dp"
         android:layout_height="match_parent"
+        android:background="#EEE"
+        android:elevation="15dp"
         android:orientation="vertical">
+
         <ImageButton
-            android:background="?attr/actionBarItemBackground"
             android:id="@+id/action_pencil"
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_weight="1"
-            android:src="@drawable/ic_tool_pencil_white"
-            android:tint="?attr/colorPrimaryDark"/>
-        <ImageButton
             android:background="?attr/actionBarItemBackground"
+            android:src="@drawable/ic_tool_pencil_white"
+            android:tint="?attr/colorPrimaryDark" />
+
+        <ImageButton
             android:id="@+id/action_eraser"
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_weight="1"
-            android:src="@drawable/ic_tool_eraser_white"
-            android:tint="#000"/>
-        <ImageButton
             android:background="?attr/actionBarItemBackground"
+            android:src="@drawable/ic_tool_eraser_white"
+            android:tint="#000" />
+
+        <ImageButton
             android:id="@+id/action_bucket"
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_weight="1"
-            android:src="@drawable/ic_tool_bucket_white"
-            android:tint="#000"/>
-        <ImageButton
             android:background="?attr/actionBarItemBackground"
+            android:src="@drawable/ic_tool_bucket_white"
+            android:tint="#000" />
+
+        <ImageButton
             android:id="@+id/action_line"
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_weight="1"
-            android:src="@drawable/ic_tool_line_white"
-            android:tint="#000"/>
-        <ImageButton
             android:background="?attr/actionBarItemBackground"
+            android:src="@drawable/ic_tool_line_white"
+            android:tint="#000" />
+
+        <ImageButton
             android:id="@+id/action_rect"
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_weight="1"
-            android:src="@drawable/ic_tool_rect_white"
-            android:tint="#000"/>
-        <ImageButton
             android:background="?attr/actionBarItemBackground"
+            android:src="@drawable/ic_tool_rect_white"
+            android:tint="#000" />
+
+        <ImageButton
             android:id="@+id/action_ellipse"
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_weight="1"
+            android:background="?attr/actionBarItemBackground"
             android:src="@drawable/ic_tool_ellipse_white"
-            android:tint="#000"/>
+            android:tint="#000" />
     </LinearLayout>
 
     <LinearLayout
-        android:id="@+id/layers_panel"
-        android:elevation="10dp"
-        android:background="#EEE"
+        android:id="@+id/frames_panel"
         android:layout_width="200dp"
         android:layout_height="match_parent"
-        android:layout_alignParentTop="true"
-        android:layout_alignParentRight="true"
         android:layout_alignParentEnd="true"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentTop="true"
+        android:background="#EEE"
+        android:elevation="10dp"
         android:orientation="vertical">
+
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:elevation="1dp">
-            <Spinner
-                android:layout_width="0dp"
-                android:layout_height="64dp"
-                android:layout_weight="1"
-                android:entries="@array/layer_view_modes"/>
+            android:elevation="1dp"
+            android:orientation="horizontal">
+
             <ImageButton
+                android:id="@+id/add_frame"
                 android:layout_width="64dp"
                 android:layout_height="64dp"
-                android:src="@drawable/ic_action_add_white"
                 android:background="?attr/actionBarItemBackground"
-                android:tint="?attr/colorPrimaryDark"/>
+                android:src="@drawable/ic_action_add_white"
+                android:tint="?attr/colorPrimaryDark" />
+
+            <android.support.v7.widget.SwitchCompat
+                android:id="@+id/enable_onion_skin"
+                android:layout_width="match_parent"
+                android:layout_height="64dp"
+                android:layout_margin="8dp"
+                android:checked="false"
+                android:enabled="true"
+                android:hint="Light Box" />
         </LinearLayout>
+
         <ListView
-            android:id="@+id/layers_list"
+            android:id="@+id/frames_list"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"/>
+            android:layout_height="match_parent"
+            android:choiceMode="singleChoice"/>
     </LinearLayout>
 
 </RelativeLayout>

@@ -28,13 +28,13 @@ public abstract class Brush {
 
     protected volatile RecycledArrayList<Point> modified;
 
-    protected byte[] editingLayer;
+    protected byte[] editingFrame;
 
     protected Point size;
 
     protected byte color;
 
-    private int layer;
+    private int frame;
 
     private PixelEditorView2 editor;
 
@@ -42,11 +42,11 @@ public abstract class Brush {
 
     private boolean isCanceled = false;
 
-    public Brush(PixelEditorView2 editor, int layer, byte color) {
+    public Brush(PixelEditorView2 editor, int frame, byte color) {
         this.editor = editor;
         art = editor.getTarget();
-        this.layer = layer;
-        modified = new RecycledArrayList<Point>(POINT_RECYCLER, POINT_COMPARER, Point.class);
+        this.frame = frame;
+        modified = new RecycledArrayList<>(POINT_RECYCLER, POINT_COMPARER, Point.class);
         this.color = color;
         refresh();
     }
@@ -61,12 +61,17 @@ public abstract class Brush {
 
     public void refresh() {
         art = editor.getTarget();
-        editingLayer = art.getLayer(layer);
+        editingFrame = art.getFrame(frame);
         size = art.getSize();
     }
 
-    public int getLayer() {
-        return layer;
+    public int getFrame() {
+        return frame;
+    }
+
+    public void setFrame(int frame) {
+        this.frame = frame;
+        refresh();
     }
 
     public void setColor(byte index) {
@@ -105,7 +110,7 @@ public abstract class Brush {
         editor.preCommitChanges();
         for (Point pt : modified) {
             if (Utils.within(pt, size))
-                editingLayer[pt.y * size.x + pt.x] = color;
+                editingFrame[pt.y * size.x + pt.x] = color;
         }
         editor.commitChanges();
         modified.clear();

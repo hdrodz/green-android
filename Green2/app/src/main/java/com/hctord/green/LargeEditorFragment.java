@@ -1,6 +1,5 @@
 package com.hctord.green;
 
-import android.animation.ObjectAnimator;
 import android.content.res.Resources;
 import android.graphics.drawable.AnimatedVectorDrawable;
 import android.graphics.drawable.Drawable;
@@ -13,13 +12,12 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
-import android.view.animation.Interpolator;
 import android.widget.AdapterView;
 import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
 
-import com.hctord.green.adapters.LayerAdapter;
+import com.hctord.green.adapters.FrameAdapter;
 import com.hctord.green.adapters.PaletteAdapter;
 import com.hctord.green.util.ColorPickerPopupWindow;
 import com.hctord.green.widget.PixelEditorView2;
@@ -55,9 +53,9 @@ public class LargeEditorFragment
 
     private PixelEditorView2 editorView;
     private PaletteAdapter paletteAdapter;
-    private LayerAdapter layerAdapter;
+    private FrameAdapter frameAdapter;
     private ListView paletteList;
-    private ListView layersList;
+    private ListView framesList;
     private View layersPanel, palettePanel, toolboxPanel;
     private ImageButton lastClickedButton;
     private Animation layersFlyOutAnimation;
@@ -141,7 +139,7 @@ public class LargeEditorFragment
             exitFullscreenDrawable = getResources().getDrawable(R.drawable.ic_action_exit_fullscreen);
         }
 
-        layersPanel = root.findViewById(R.id.layers_panel);
+        layersPanel = root.findViewById(R.id.frames_panel);
         toolboxPanel = root.findViewById(R.id.toolbox_panel);
         palettePanel = root.findViewById(R.id.palette_panel);
 
@@ -180,16 +178,32 @@ public class LargeEditorFragment
                 return true;
             }
         });
-        paletteList.setSelection(1);
+        paletteList.setItemChecked(1, true);
 
         // Setup color editor popup
         colorPopupWindow = new ColorPickerPopupWindow(getActivity(), (ViewGroup) root);
         colorPopupWindow.setOnColorChangedListener(this);
 
         // Setup layers list
-        layersList = (ListView) root.findViewById(R.id.layers_list);
-        layerAdapter = new LayerAdapter(getActivity(), editorView.getTarget());
-        layersList.setAdapter(layerAdapter);
+        framesList = (ListView) root.findViewById(R.id.frames_list);
+        frameAdapter = new FrameAdapter(getActivity(), editorView.getTarget());
+        framesList.setAdapter(frameAdapter);
+        framesList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                editorView.setEditingFrame(position);
+            }
+        });
+        framesList.setItemChecked(0, true);
+
+        btn = (ImageButton)root.findViewById(R.id.add_frame);
+        btn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                editorView.addFrame();
+                frameAdapter.notifyDataSetChanged();
+            }
+        });
 
         btn = (ImageButton) root.findViewById(R.id.add_color);
         btn.setOnClickListener(ADD_COLOR_BUTTON_LISTENER);
@@ -252,7 +266,8 @@ public class LargeEditorFragment
 
     @Override
     public void onEdit() {
-        layerAdapter.invalidateLayer(0);
+        super.onEdit();
+        frameAdapter.invalidateFrame(editorView.getEditingFrame());
     }
 
     @Override

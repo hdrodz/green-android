@@ -311,25 +311,25 @@ public class PixelEditorView extends View {
     byte[] __changeBefore;
 
     public void preCommitChanges() {
-        __changeBefore = target.getLayer(brush.getLayer()).clone();
+        __changeBefore = target.getFrame(brush.getFrame()).clone();
     }
 
     public void commitChanges() {
         targetRenderer.updateCache();
         targetRenderer.discardEditCache();
         invalidate();
-//        historyManager.saveToHistory(editingLayer);
+//        historyManager.saveToHistory(editingFrame);
         if (listener != null)
             listener.onEdit();
     }
 
     public boolean canUndo() {
-        return //historyManager.canUndo(editingLayer);
+        return //historyManager.canUndo(editingFrame);
         false;
     }
 
     public boolean canRedo() {
-        return //historyManager.canRedo(editingLayer);
+        return //historyManager.canRedo(editingFrame);
         false;
     }
 

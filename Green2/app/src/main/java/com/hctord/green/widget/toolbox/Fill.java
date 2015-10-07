@@ -56,7 +56,10 @@ public final class Fill extends Brush {
                 final int w = size.x;
                 final int h = size.y;
 
-                byte initialColor = editingLayer[start.y * w + start.x];
+                if (start.x < 0 || start.x >= w || start.y < 0 || start.y >= h)
+                    return;
+
+                byte initialColor = editingFrame[start.y * w + start.x];
 
                 toExplore.addAndRecycle(start.x, start.y);
                 while (!toExplore.isEmpty() && keepGoing) {
@@ -70,7 +73,7 @@ public final class Fill extends Brush {
                     if (y - 1 >= 0) {
                         y2 = y - 1;
                         if (!explored[y2 * w + x2]) {
-                            if (editingLayer[y2 * w + x2] == initialColor)
+                            if (editingFrame[y2 * w + x2] == initialColor)
                                 toExplore.addAndRecycle(x2, y2);
                             explored[y2 * w + x2] = true;
                         }
@@ -78,7 +81,7 @@ public final class Fill extends Brush {
                     if (y + 1 < h) {
                         y2 = y + 1;
                         if (!explored[y2 * w + x2]) {
-                            if (editingLayer[y2 * w + x2] == initialColor)
+                            if (editingFrame[y2 * w + x2] == initialColor)
                                 toExplore.addAndRecycle(x2, y2);
                             explored[y2 * w + x2] = true;
                         }
@@ -87,7 +90,7 @@ public final class Fill extends Brush {
                     if (x - 1 >= 0) {
                         x2 = x - 1;
                         if (!explored[y2 * w + x2]) {
-                            if (editingLayer[y2 * w + x2] == initialColor)
+                            if (editingFrame[y2 * w + x2] == initialColor)
                                 toExplore.addAndRecycle(x2, y2);
                             explored[y2 * w + x2] = true;
                         }
@@ -95,7 +98,7 @@ public final class Fill extends Brush {
                     if (x + 1 < w) {
                         x2 = x + 1;
                         if (!explored[y2 * w + x2]) {
-                            if (editingLayer[y2 * w + x2] == initialColor)
+                            if (editingFrame[y2 * w + x2] == initialColor)
                                 toExplore.addAndRecycle(x2, y2);
                             explored[y2 * w + x2] = true;
                         }
@@ -137,9 +140,7 @@ public final class Fill extends Brush {
             if (CURRENT_FLOODER != null) {
                 try {
                     PIXEL_LOCK.wait(500);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                } catch (IllegalMonitorStateException e) {
+                } catch (InterruptedException|IllegalMonitorStateException e) {
                     e.printStackTrace();
                 }
             }

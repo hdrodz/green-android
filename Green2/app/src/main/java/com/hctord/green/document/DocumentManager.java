@@ -198,6 +198,7 @@ public class DocumentManager {
         private int openDocumentIndex;
         private String filename;
         private int artHashCode;
+        private int averageColorSat;
 
         private OpenPixelArtInfo() {}
 
@@ -240,6 +241,10 @@ public class DocumentManager {
                 return new OpenPixelArtInfo[len];
             }
         };
+
+        public int getAverageColorSat() {
+            return averageColorSat;
+        }
     }
 
     @Deprecated

@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
-<com.hctord.green.widget.CheckableLinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<com.hctord.green.widget.CheckableLinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:orientation="horizontal"
     android:layout_width="match_parent"
     android:layout_height="80dp">
@@ -17,13 +19,7 @@
         android:layout_height="match_parent"
         android:layout_weight="1"
         android:layout_margin="8dp"
-        android:text="Layer 1"
+        tools:text="0"
         android:gravity="center|start"/>
-
-    <CheckBox
-        android:id="@+id/visible"
-        android:layout_width="wrap_content"
-        android:layout_height="match_parent"
-        android:layout_margin="8dp"/>
 
 </com.hctord.green.widget.CheckableLinearLayout>

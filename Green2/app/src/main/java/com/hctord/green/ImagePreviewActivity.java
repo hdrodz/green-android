@@ -8,7 +8,7 @@ import android.support.v7.app.ActionBarActivity;
 import android.view.MenuItem;
 import android.widget.ImageView;
 
-import com.hctord.green.adapters.PixelArtAdapter;
+import com.hctord.green.document.FileScanner;
 
 
 /**
@@ -22,7 +22,7 @@ public class ImagePreviewActivity extends ActionBarActivity {
         Intent intent = getIntent();
 
         ImageView view = (ImageView)findViewById(R.id.preview);
-        PixelArtAdapter.PixelArtHandle2 handle = intent.getParcelableExtra(EXTRA_HANDLE);
+        FileScanner.PixelArtHandle handle = intent.getParcelableExtra(EXTRA_HANDLE);
 
         /*byte[] imgData = intent.getByteArrayExtra(EXTRA_PREVIEW);
 

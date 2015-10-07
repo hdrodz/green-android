@@ -5,22 +5,24 @@ import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.ActivityOptionsCompat;
 import android.support.v7.app.ActionBarActivity;
+import android.support.v7.widget.GridLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.Window;
-import android.widget.GridView;
 
-import com.hctord.green.adapters.PixelArtAdapter;
+import com.hctord.green.adapters.PixelArtRecyclerAdapter;
 import com.hctord.green.document.DocumentManager;
+import com.hctord.green.document.FileScanner;
 import com.hctord.green.util.Action;
 
 
 public class LandingActivity
         extends ActionBarActivity
         implements
-            PixelArtAdapter.Callbacks {
+            PixelArtRecyclerAdapter.Callbacks {
 
     private DocumentManager documentManager;
     private Action<Void> onFinishCallback = new Action<Void>() {
@@ -28,7 +30,9 @@ public class LandingActivity
         public void run(Void unused) {
         }
     };
-    private PixelArtAdapter adapter;
+    //private PixelArtAdapter adapter;
+
+    private PixelArtRecyclerAdapter adapter;
 
     private void setupToolbar() {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -45,11 +49,21 @@ public class LandingActivity
 
         setContentView(R.layout.activity_landing);
 
+        documentManager = DocumentManager.getDocumentManager(getApplicationContext());
+
+        int columnCount = getResources().getInteger(R.integer.column_count);
+
+        RecyclerView recyclerView = (RecyclerView)findViewById(R.id.grid);
+        GridLayoutManager gridLayoutManager = new GridLayoutManager(this, columnCount);
+        recyclerView.setLayoutManager(gridLayoutManager);
+        adapter = new PixelArtRecyclerAdapter(this, null, onFinishCallback, this);
+        recyclerView.setAdapter(adapter);
+        /*
         GridView gridView = (GridView)findViewById(R.id.grid);
 
-        documentManager = DocumentManager.getDocumentManager(getApplicationContext());
         adapter = new PixelArtAdapter(this, null, onFinishCallback, this);
         gridView.setAdapter(adapter);
+        */
 
         setupToolbar();
     }
@@ -59,7 +73,7 @@ public class LandingActivity
         super.onResume();
 
         if (documentManager.isDirty()) {
-            adapter.refreshFilesList();
+            adapter.refreshFilesList(this);
             documentManager.clearDirty();
         }
     }
@@ -128,7 +142,7 @@ public class LandingActivity
         }
 
         // TODO: add parameters to options
-        PixelArtAdapter.PixelArtHandle2 handle = adapter.getItem(position);
+        FileScanner.PixelArtHandle handle = adapter.getItem(position);
         intent.putExtra(ImagePreviewActivity.EXTRA_HANDLE, handle);
 
         startActivity(intent, options);
@@ -136,7 +150,7 @@ public class LandingActivity
 
     @Override
     public void onRequestOpen(int position) {
-        PixelArtAdapter.PixelArtHandle2 handle = adapter.getItem(position);
+        FileScanner.PixelArtHandle handle = adapter.getItem(position);
         DocumentManager.OpenPixelArtInfo info = documentManager.openDocument(handle.getFilename());
         Intent intent = new Intent(this, EditorActivity.class);
         intent.putExtra(CommonEditorFragment.ARG_HANDLE, info);

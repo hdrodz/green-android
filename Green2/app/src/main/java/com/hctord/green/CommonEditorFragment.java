@@ -1,22 +1,19 @@
 package com.hctord.green;
 
+import android.app.ActivityManager;
 import android.app.Fragment;
-import android.content.Context;
-import android.graphics.Point;
+import android.os.Build;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Toast;
+import android.support.v7.widget.Toolbar;
 
 import com.hctord.green.document.DocumentManager;
+import com.hctord.green.document.history.HistoryManager;
+import com.hctord.green.util.Utils;
 import com.hctord.green.widget.PixelEditorView2;
-import com.hctord.green.document.PixelArt;
-
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
 
 /**
  * Contains common functionality between the two editor layouts.
@@ -27,7 +24,8 @@ public abstract class CommonEditorFragment
             EditorActivity.Callbacks,
             PixelEditorView2.OnEditListener {
 
-    public static final String ARG_HANDLE = "com.hctord.green.CommonEditorFragment.ARG_HANDLE";
+    public static final String ARG_HANDLE = "com.hctord.green.CommonEditorFragment.ARG_HANDLE",
+                               ARG_TASK_DESCRIPTION = "com.hctord.green.CommonEditorFragment.ARG_TASK_DESCRIPTION";
 
     protected static final String STATE_TOOL_ID = "com.hctord.green.editor.STATE_TOOL_ID";
 
@@ -37,6 +35,9 @@ public abstract class CommonEditorFragment
     private PixelEditorView2 editorView;
     private String token;
     private DocumentManager documentManager;
+    private HistoryManager historyManager;
+    private ActivityManager.TaskDescription taskDescription;
+    private Toolbar toolbar;
 
     protected CommonEditorFragment(int layoutResId) {
         this.layoutResId = layoutResId;
@@ -74,6 +75,18 @@ public abstract class CommonEditorFragment
 
     protected abstract void init(View root, Bundle savedInstanceState);
 
+    private void updateToolbarColor() {
+        int color = Utils.maxSaturation(getAverageColor());
+        toolbar.setBackgroundColor(color);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            getActivity().getWindow().setStatusBarColor(Utils.multiplyValue(color, 0.75f));
+        }
+    }
+
+    public void setToolbar(Toolbar toolbar) {
+        this.toolbar = toolbar;
+    }
+
     @Override
     public final View onCreateView(LayoutInflater inflater, ViewGroup parent, Bundle savedInstanceState) {
         View view = inflater.inflate(layoutResId, parent, false);
@@ -82,6 +95,9 @@ public abstract class CommonEditorFragment
         try {
             Bundle args = getArguments();
             DocumentManager.OpenPixelArtInfo handle = args.getParcelable(ARG_HANDLE);
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP)
+                taskDescription = args.getParcelable(ARG_TASK_DESCRIPTION);
+            editorView.setOnEditListener(this);
             editorView.setTarget(DocumentManager.getDocumentManager().getDocument(handle));
 
             if (savedInstanceState != null) {
@@ -90,6 +106,8 @@ public abstract class CommonEditorFragment
             }
 
             init(view, savedInstanceState);
+
+            updateToolbarColor();
         }
         catch (NullPointerException e) {
             e.printStackTrace();
@@ -98,9 +116,28 @@ public abstract class CommonEditorFragment
     }
 
     @Override
+    public int getAverageColor() {
+        return editorView.getTarget().getAverageColor();
+    }
+
+    @Override
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putInt(STATE_TOOL_ID, toolId);
+    }
+
+    @Override
+    public void onPreEdit() {
+        if (historyManager == null) {
+            historyManager = new HistoryManager(editorView.getTarget());
+        }
+
+        historyManager.saveToHistory(editorView.getEditingFrame());
+    }
+
+    @Override
+    public void onEdit() {
+        updateToolbarColor();
     }
 
     @Override

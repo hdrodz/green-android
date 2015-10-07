@@ -249,7 +249,14 @@ public final class Utils {
     private static float[] hsv = new float[3];
     public static int maxSaturation(int rgb) {
         Color.colorToHSV(rgb, hsv);
-        hsv[1] = 1;
+        if (hsv[1] != 0)
+            hsv[1] = 1;
+        return Color.HSVToColor(hsv);
+    }
+
+    public static int multiplyValue(int rgb, float value) {
+        Color.colorToHSV(rgb, hsv);
+        hsv[2] *= value;
         return Color.HSVToColor(hsv);
     }
 }

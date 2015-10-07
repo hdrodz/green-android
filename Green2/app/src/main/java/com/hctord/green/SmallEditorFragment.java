@@ -20,7 +20,7 @@ import com.hctord.green.widget.PixelEditorView2;
 /**
  * Fragment that manages the editor on a standard sized screen
  */
-public class EditorFragment
+public class SmallEditorFragment
         extends CommonEditorFragment
         implements
             ColorPickerPopupWindow.OnColorChangedListener {
@@ -100,7 +100,7 @@ public class EditorFragment
         paletteButton.setEnabled(id != R.id.action_eraser);
     }
 
-    public EditorFragment() {
+    public SmallEditorFragment() {
         super(R.layout.fragment_editor);
     }
 
@@ -178,12 +178,12 @@ public class EditorFragment
 
     @Override
     public void onPreEdit() {
-
+        super.onPreEdit();
     }
 
     @Override
     public void onEdit() {
-
+        super.onEdit();
     }
 
     @Override

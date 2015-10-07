@@ -18,11 +18,14 @@ import android.widget.EditText;
 import android.widget.TextView;
 
 import com.hctord.green.document.DocumentManager;
+import com.hctord.green.util.Utils;
 
 
 public class EditorActivity extends ActionBarActivity {
     public static final String EXTRA_LOAD_EXISTING = "com.hctord.green.EditorActivity.loadExistingFile",
                                EXTRA_SAVED_HANDLE = "com.hctord.green.EditorActivity.savedFileHandle";
+
+    private static final String TAG_FRAGMENT = "com.hctord.green.EditorActivity.fragment";
 
     private static boolean wasInLargeMode;
 
@@ -30,6 +33,7 @@ public class EditorActivity extends ActionBarActivity {
     private static Bitmap ICON = null;
     private String filename;
     private DocumentManager.OpenPixelArtInfo handle;
+    private TextView titleTextView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,27 +50,31 @@ public class EditorActivity extends ActionBarActivity {
         // Title string
         String title = filename.replace(".green", "");
 
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        ((TextView)toolbar.findViewById(R.id.title)).setText(title);
-        setSupportActionBar(toolbar);
-
         setTitle(title);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             if (ICON == null)
                 ICON = BitmapFactory.decodeResource(getResources(), R.drawable.ic_launcher);
-            int color = getResources().getColor(R.color.primary);
+            int color = (callbacks != null)
+                    ? handle.getAverageColorSat()
+                    : getResources().getColor(R.color.primary);
             setTaskDescription(new ActivityManager.TaskDescription(title, ICON, color));
         }
+
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        titleTextView = ((TextView)toolbar.findViewById(R.id.title));
+        titleTextView.setText(title);
+        setSupportActionBar(toolbar);
 
         if (savedInstanceState == null) {
             CommonEditorFragment fragment =
                     isInLargeMode
                             ? new LargeEditorFragment()
-                            : new EditorFragment();
+                            : new SmallEditorFragment();
             fragment.setArguments(intent.getExtras());
+            fragment.setToolbar(toolbar);
             callbacks = fragment;
             getFragmentManager().beginTransaction()
-                    .add(R.id.container, fragment)
+                    .add(R.id.container, fragment, TAG_FRAGMENT)
                     .commit();
         }
         else {
@@ -74,17 +82,37 @@ public class EditorActivity extends ActionBarActivity {
                 CommonEditorFragment fragment =
                         isInLargeMode
                                 ? new LargeEditorFragment()
-                                : new EditorFragment();
+                                : new SmallEditorFragment();
                 callbacks = fragment;
                 fragment.setArguments(intent.getExtras());
+                fragment.setToolbar(toolbar);
                 getFragmentManager().beginTransaction()
-                        .replace(R.id.container, fragment)
+                        .replace(R.id.container, fragment, TAG_FRAGMENT)
                         .commit();
+            }
+            else {
+                CommonEditorFragment fragment =
+                        (CommonEditorFragment)getFragmentManager().findFragmentByTag(TAG_FRAGMENT);
+                callbacks = fragment;
+                fragment.setToolbar(toolbar);
             }
         }
         wasInLargeMode = isInLargeMode;
     }
 
+    @Override
+    protected void onPause() {
+        super.onPause();
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            String title = titleTextView.getText().toString();
+            int color = callbacks != null
+                    ? Utils.maxSaturation(callbacks.getAverageColor())
+                    : getResources().getColor(R.color.primary);
+            setTaskDescription(new ActivityManager.TaskDescription(
+                    title, ICON, color
+            ));
+        }
+    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -117,9 +145,11 @@ public class EditorActivity extends ActionBarActivity {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
                                 filename = txtView.getText().toString() + ".green";
-                                setTitle(txtView.getText().toString());
+                                titleTextView.setText(txtView.getText().toString());
                                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                                    int color = getResources().getColor(R.color.primary);
+                                    int color = callbacks != null
+                                            ? Utils.maxSaturation(callbacks.getAverageColor())
+                                            : getResources().getColor(R.color.primary);
                                     setTaskDescription(new ActivityManager.TaskDescription(filename.replace(".green", ""), ICON, color));
                                 }
 
@@ -156,5 +186,6 @@ public class EditorActivity extends ActionBarActivity {
         public void saveFile(DocumentManager.OpenPixelArtInfo info, String filename);
         public void onMenuInflated(Menu menu);
         public void toggleFullscreen(MenuItem fullScreenItem);
+        public int getAverageColor();
     }
 }

@@ -14,7 +14,8 @@ import java.util.List;
 
 import com.hctord.green.util.Utils;
 
-public class PixelArt implements Parcelable {
+public class PixelArt
+        implements Parcelable {
 
     public static final int[] DEFAULT_PALETTE = {
             Color.TRANSPARENT,
@@ -48,7 +49,7 @@ public class PixelArt implements Parcelable {
             palette.add(color);
         }
         frames = new ArrayList<byte[]>();
-        addLayer();
+        addFrame();
     }
 
     public PixelArt(InputStream stream) throws IOException {
@@ -80,7 +81,7 @@ public class PixelArt implements Parcelable {
 
     public int getHeight() { return size.y; }
 
-    public void addLayer() {
+    public void addFrame() {
         frames.add(new byte[size.y * size.x]);
     }
 
@@ -138,6 +139,10 @@ public class PixelArt implements Parcelable {
                 ++nontransparent_pixels;
             }
         }
+
+        if (nontransparent_pixels == 0)
+            return 0xFF000000;
+
         int r = (int)(total_r / nontransparent_pixels);
         int g = (int)(total_g / nontransparent_pixels);
         int b = (int)(total_b / nontransparent_pixels);
@@ -145,8 +150,12 @@ public class PixelArt implements Parcelable {
         return 0xFF000000 | (r << 16) | (g << 8) | b;
     }
 
-    public byte[] getLayer(int position) {
+    public byte[] getFrame(int position) {
         return frames.get(position);
+    }
+
+    public int frameCount() {
+        return frames.size();
     }
 
     public void write(OutputStream stream) throws IOException {
@@ -240,4 +249,5 @@ public class PixelArt implements Parcelable {
             return new PixelArt[len];
         }
     };
+
 }

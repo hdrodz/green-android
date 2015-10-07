@@ -39,21 +39,21 @@ public class ImageRenderer {
             if (cache != null)
                 cache.recycle();
             cache = Bitmap.createBitmap(src.getWidth(), src.getHeight(), Bitmap.Config.ARGB_8888);
-            updateCache();
+            updateCache(0);
             editCache = cache.copy(Bitmap.Config.ARGB_8888, true);
         }
     }
 
     /**
-     * Creates a valid cached image containing the data of the current layer.
-     * @param layer
+     * Creates a valid cached image containing the data of the current frame.
+     * @param frame
      */
-    public void createEditCache(int layer) {
+    public void createEditCache(int frame) {
         Integer[] palette = new Integer[src.getPalette().size()];
         src.getPalette().toArray(palette);
         int[] pixels = new int[src.getHeight() * src.getWidth()];
         int w = src.getWidth();
-        byte[] srcLayer = src.getLayer(layer);
+        byte[] srcLayer = src.getFrame(frame);
         for (int y = 0; y < src.getHeight(); y++) {
             for (int x = 0; x < w; x++) {
                 pixels[y * w + x] = palette[srcLayer[y * w + x]];
@@ -63,9 +63,9 @@ public class ImageRenderer {
         editCacheInvalidated = false;
     }
 
-    public void updateEditCache(List<Point> edited, byte color, int layer) {
+    public void updateEditCache(List<Point> edited, byte color, int frame) {
         if (editCacheInvalidated)
-            createEditCache(layer);
+            createEditCache(frame);
 
         Integer[] palette = new Integer[src.getPalette().size()];
         src.getPalette().toArray(palette);
@@ -79,7 +79,7 @@ public class ImageRenderer {
             if (color != 0)
                 pixels[pt.y * w + pt.x] = palette[color];
             else
-                pixels[pt.y * w + pt.x] = ~palette[src.getLayer(layer)[pt.y * w + pt.x]] | 0xFF000000;
+                pixels[pt.y * w + pt.x] = ~palette[src.getFrame(frame)[pt.y * w + pt.x]] | 0xFF000000;
         }
         editCache.setPixels(pixels, 0, w, 0, 0, w, src.getHeight());
     }
@@ -92,19 +92,44 @@ public class ImageRenderer {
         return editCache;
     }
 
+    @Deprecated
     public void updateCacheFrom(int startingLayer) {
         updateCache(startingLayer, src.getFrames().size() - 1);
     }
 
-    public void updateCache(int layer) {
-        updateCache(layer, layer);
+    public void updateCache(int frame) {
+        // Get the image palette in an array for quick indexing
+        Integer[] palette = new Integer[src.getPalette().size()];
+        src.getPalette().toArray(palette);
+        // Contains the color values that will be generated
+        int[] pixels = new int[src.getHeight() * src.getWidth()];
+        int w = src.getWidth();
+        // Create the cached image if it is null.
+        if (cache == null)
+            cache = Bitmap.createBitmap(src.getWidth(), src.getHeight(), Bitmap.Config.ARGB_8888);
+
+        byte[] frameData = src.getFrame(frame);
+        for (int y = 0; y < src.getHeight(); y++) {
+            for (int x = 0; x < src.getWidth(); x++) {
+                // Skip this pixel if the color is transparent
+                // TODO: implement alpha blending
+                if (palette[frameData[y * w + x]].equals(Color.TRANSPARENT))
+                    continue;
+
+                pixels[y * w + x] = palette[frameData[y * w + x]];
+            }
+        }
+
+        cache.setPixels(pixels, 0, w, 0, 0, w, src.getHeight());
     }
 
     /**
      * Renders a fragment of the image.
      * @param startingLayer First layer to render, inclusively.
      * @param endingLayer Last layer to render, inclusively.
+     * @deprecated No longer does anything, use updateCache(frame).
      */
+    @Deprecated
     public void updateCache(int startingLayer, int endingLayer) {
         // Get the image palette in an array for quick indexing
         Integer[] palette = new Integer[src.getPalette().size()];
@@ -118,7 +143,7 @@ public class ImageRenderer {
 
         // Render the image in the range
         for (int i = startingLayer; i <= endingLayer; i++) {
-            byte[] layer = src.getLayer(i);
+            byte[] layer = src.getFrame(i);
             for (int y = 0; y < src.getHeight(); y++) {
                 for (int x = 0; x < src.getWidth(); x++) {
                     // Skip this pixel if the color is transparent
@@ -145,7 +170,7 @@ public class ImageRenderer {
 
         // Draw through the image layers
         for (int i = startingLayer; i < src.getFrames().size(); i++) {
-            byte[] layer = src.getLayer(i);
+            byte[] layer = src.getFrame(i);
             // Update the specified pixels
             for (Point pt : which) {
                 if (!Utils.within(pt, src.getSize())) continue;
@@ -168,6 +193,7 @@ public class ImageRenderer {
     /*
      * Force a redraw of the entire image to the cache.
      */
+    @Deprecated
     public void updateCache() {
         updateCacheFrom(0);
     }

@@ -40,7 +40,7 @@ public class GeneralEditHistoryEntry implements HistoryEntry {
         if (firstInit) {
             newLayer = (byte[]) args[1];
             index = (Integer) args[2];
-            oldLayer = pa.getLayer(index).clone();
+            oldLayer = pa.getFrame(index).clone();
         }
     }
 
