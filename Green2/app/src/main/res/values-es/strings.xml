@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Verde</string>
+    <string name="action_delete">Borrar</string>
+    <string name="action_export">Exportar</string>
+    <string name="action_layers">Capas</string>
+    <string name="action_palette">Paleta</string>
+    <string name="action_rename">Nombrar</string>
+    <string name="action_settings">Configuración</string>
+    <string name="action_tools">Herramientas</string>
+    <string name="cancel">Cancelar</string>
+    <string name="deleted">Archivo borrado.</string>
+    <string name="dummy_content">CONTENIDO/BRUTO</string>
+    <string name="dummy_button">Botón bruto</string>
+    <string name="empty">Aquí no hay imágenes.</string>
+    <string name="fullscreen">Pantalla completa</string>
+    <string name="header_all">Todos los documentos</string>
+    <string name="header_open">Documentos abiertos</string>
+    <string name="hello_world">Hola mundo!</string>
+    <string name="hint_filename">Nombre del imagen</string>
+    <string name="message_delete">Esta operación no se puede deshacer.</string>
+    <string name="message_empty_filename">El nombre del archivo no puede quedarse en blanco.</string>
+    <string name="no">No</string>
+    <string name="ok">OK</string>
+    <string name="title_activity_color">Color</string>
+    <string name="title_activity_color_picker">Escoja el color...</string>
+    <string name="title_activity_image_list">Galería</string>
+    <string name="title_activity_image_preview">Prevista</string>
+    <string name="title_activity_landing">ActividadDeAterrizaje</string>
+    <string name="title_activity_new_image">Nuevo imagen</string>
+    <string name="title_activity_save_image">Guardar imagen</string>
+    <string name="title_are_you_sure">¿Estás seguro?</string>
+    <string name="title_error">Error</string>
+    <string name="tool_ellipse">Elipse</string>
+    <string name="tool_eraser">Borrador</string>
+    <string name="tool_fill">Cubo</string>
+    <string name="tool_line">Línea</string>
+    <string name="tool_rect">Rectángulo</string>
+    <string name="tool_pencil">Lápiz</string>
+    <string name="undo">Deshacer</string>
+    <string name="wtf">No se suponga que veas esto.</string>
+    <string name="yes">Sí</string>
+    <string name="app_author">Creado con amor desde Gurabo, Puerto Rico</string>
+    <string name="app_description">Editor de arte de pixeles e imágenes animados.</string>
+</resources>

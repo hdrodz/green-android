@@ -19,7 +19,7 @@
     <string name="yes">Yes</string>
     <string name="no">No</string>
     <string name="hint_filename">Image\'s file name</string>
-    <string name="format_details">%1$dx%2$d; %3$.2f kB</string>
+    <string name="format_details" translatable="false">%1$dx%2$d; %3$.2f kB</string>
     <string name="empty">There aren\'t any images here.</string>
     <string name="cancel">Cancel</string>
     <string name="ok">OK</string>
@@ -57,5 +57,7 @@
 
     <string name="header_all">All Documents</string>
     <string name="header_open">Open Documents</string>
+    <string name="app_description">Pixel art and animated sprite editor.</string>
+    <string name="app_author">Created with love from Gurabo, Puerto Rico</string>
 
 </resources>

@@ -51,14 +51,6 @@ public class EditorActivity extends ActionBarActivity {
         String title = filename.replace(".green", "");
 
         setTitle(title);
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            if (ICON == null)
-                ICON = BitmapFactory.decodeResource(getResources(), R.drawable.ic_launcher);
-            int color = (callbacks != null)
-                    ? handle.getAverageColorSat()
-                    : getResources().getColor(R.color.primary);
-            setTaskDescription(new ActivityManager.TaskDescription(title, ICON, color));
-        }
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         titleTextView = ((TextView)toolbar.findViewById(R.id.title));
@@ -97,6 +89,16 @@ public class EditorActivity extends ActionBarActivity {
                 fragment.setToolbar(toolbar);
             }
         }
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            if (ICON == null)
+                ICON = BitmapFactory.decodeResource(getResources(), R.drawable.ic_launcher);
+            int color = (callbacks != null)
+                    ? handle.getAverageColorSat()
+                    : getResources().getColor(R.color.primary);
+            setTaskDescription(new ActivityManager.TaskDescription(title, ICON, color));
+        }
+
         wasInLargeMode = isInLargeMode;
     }
 
@@ -112,6 +114,13 @@ public class EditorActivity extends ActionBarActivity {
                     title, ICON, color
             ));
         }
+    }
+
+    @Override
+    protected void onDestroy() {
+        // Close the associated document
+        DocumentManager.getDocumentManager().closeDocument(handle);
+        super.onDestroy();
     }
 
     @Override
@@ -179,13 +188,13 @@ public class EditorActivity extends ActionBarActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    public static interface Callbacks {
-        public void clearCanvas();
-        public void centerCanvas();
-        public void saveFile(DocumentManager.OpenPixelArtInfo info);
-        public void saveFile(DocumentManager.OpenPixelArtInfo info, String filename);
-        public void onMenuInflated(Menu menu);
-        public void toggleFullscreen(MenuItem fullScreenItem);
-        public int getAverageColor();
+    public interface Callbacks {
+        void clearCanvas();
+        void centerCanvas();
+        void saveFile(DocumentManager.OpenPixelArtInfo info);
+        void saveFile(DocumentManager.OpenPixelArtInfo info, String filename);
+        void onMenuInflated(Menu menu);
+        void toggleFullscreen(MenuItem fullScreenItem);
+        int getAverageColor();
     }
 }
