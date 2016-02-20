@@ -4,7 +4,7 @@ import android.annotation.TargetApi;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
-import android.support.v7.app.ActionBarActivity;
+import android.support.v7.app.AppCompatActivity;
 import android.view.MenuItem;
 import android.widget.ImageView;
 
@@ -13,7 +13,7 @@ import com.hctord.green.document.FileScanner;
 
 /**
  */
-public class ImagePreviewActivity extends ActionBarActivity {
+public class ImagePreviewActivity extends AppCompatActivity {
     public static final String EXTRA_HANDLE = "ImagePreviewActivity.handle",
                                EXTRA_FILENAME = "ImagePreviewActivity.filename",
                                EXTRA_PREVIEW = "ImagePreviewActivity.preview";
