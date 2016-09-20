@@ -1,6 +1,5 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context="com.hctord.green.LandingActivity">
@@ -11,7 +10,7 @@
         android:layout_height="wrap_content"
         android:minHeight="?attr/actionBarSize"
         android:background="?attr/colorPrimary"
-        android:elevation="10dp">
+        android:elevation="8dp">
 
         <RelativeLayout
             android:layout_width="match_parent"
@@ -28,6 +27,66 @@
         </RelativeLayout>
 
     </android.support.v7.widget.Toolbar>
+
+    <RelativeLayout
+        android:id="@+id/new_document_panel"
+        android:layout_width="match_parent"
+        android:layout_height="240dp"
+        android:layout_below="@id/toolbar"
+        android:background="#FFF"
+        android:elevation="4dp"
+        android:orientation="vertical">
+        <Button
+            style="?attr/borderlessButtonStyle"
+            android:id="@+id/ok"
+            android:layout_width="wrap_content"
+            android:layout_height="48dp"
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentEnd="true"
+            android:layout_margin="8dp"
+            android:text="@string/ok"
+            android:textColor="?attr/colorAccent"/>
+        <Button
+            style="?attr/borderlessButtonStyle"
+            android:id="@+id/cancel"
+            android:layout_width="wrap_content"
+            android:layout_height="48dp"
+            android:layout_alignParentBottom="true"
+            android:layout_toLeftOf="@id/ok"
+            android:layout_toStartOf="@id/ok"
+            android:layout_margin="8dp"
+            android:text="@string/cancel"
+            android:textColor="?attr/colorAccent"/>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_above="@id/ok"
+            android:orientation="horizontal">
+            <NumberPicker
+                android:id="@+id/width_picker"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:layout_margin="8dp"/>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_margin="8dp"
+                android:gravity="center"
+                android:text="@string/mult_sign"
+                android:textSize="18sp"
+                />
+            <NumberPicker
+                android:id="@+id/height_picker"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:layout_margin="8dp"
+                />
+        </LinearLayout>
+    </RelativeLayout>
 
     <!--
     <TextView

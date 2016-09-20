@@ -3,11 +3,12 @@ package com.hctord.green;
 import android.content.res.Resources;
 import android.os.Build;
 import android.os.Bundle;
+import android.support.v7.widget.PopupMenu;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.support.v7.widget.PopupMenu;
 import android.view.ViewGroup;
+import android.view.animation.Animation;
 import android.widget.AdapterView;
 import android.widget.ImageButton;
 import android.widget.ListView;
@@ -65,6 +66,8 @@ public class SmallEditorFragment
     private PopupWindow paletteWindow;
     private ColorPickerPopupWindow colorPopupWindow;
     private PaletteAdapter paletteAdapter;
+    private Animation paletteFlyOutAnimation;
+    private Animation paletteFlyInAnimation;
 
     private PopupMenu.OnMenuItemClickListener toolboxListener = new PopupMenu.OnMenuItemClickListener() {
         @Override

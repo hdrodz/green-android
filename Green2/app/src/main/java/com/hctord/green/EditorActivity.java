@@ -9,7 +9,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Build;
 import android.os.Bundle;
-import android.support.v7.app.ActionBarActivity;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -21,7 +21,7 @@ import com.hctord.green.document.DocumentManager;
 import com.hctord.green.util.Utils;
 
 
-public class EditorActivity extends ActionBarActivity {
+public class EditorActivity extends AppCompatActivity {
     public static final String EXTRA_LOAD_EXISTING = "com.hctord.green.EditorActivity.loadExistingFile",
                                EXTRA_SAVED_HANDLE = "com.hctord.green.EditorActivity.savedFileHandle";
 
@@ -93,9 +93,14 @@ public class EditorActivity extends ActionBarActivity {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             if (ICON == null)
                 ICON = BitmapFactory.decodeResource(getResources(), R.drawable.ic_launcher);
-            int color = (callbacks != null)
-                    ? handle.getAverageColorSat()
-                    : getResources().getColor(R.color.primary);
+
+            int color;
+            if (callbacks != null)
+                color = handle.getAverageColorSat();
+            else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M)
+                color = getResources().getColor(R.color.primary, null);
+            else
+                color = getResources().getColor(R.color.primary);
             setTaskDescription(new ActivityManager.TaskDescription(title, ICON, color));
         }
 
@@ -107,9 +112,13 @@ public class EditorActivity extends ActionBarActivity {
         super.onPause();
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             String title = titleTextView.getText().toString();
-            int color = callbacks != null
-                    ? Utils.maxSaturation(callbacks.getAverageColor())
-                    : getResources().getColor(R.color.primary);
+            int color;
+            if (callbacks != null)
+                color = Utils.maxSaturation(callbacks.getAverageColor());
+            else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M)
+                color = getResources().getColor(R.color.primary, null);
+            else
+                color = getResources().getColor(R.color.primary);
             setTaskDescription(new ActivityManager.TaskDescription(
                     title, ICON, color
             ));
@@ -156,9 +165,13 @@ public class EditorActivity extends ActionBarActivity {
                                 filename = txtView.getText().toString() + ".green";
                                 titleTextView.setText(txtView.getText().toString());
                                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                                    int color = callbacks != null
-                                            ? Utils.maxSaturation(callbacks.getAverageColor())
-                                            : getResources().getColor(R.color.primary);
+                                    int color;
+                                    if (callbacks != null)
+                                            color = Utils.maxSaturation(callbacks.getAverageColor());
+                                    else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M)
+                                        color = getResources().getColor(R.color.primary, null);
+                                    else
+                                        color = getResources().getColor(R.color.primary);
                                     setTaskDescription(new ActivityManager.TaskDescription(filename.replace(".green", ""), ICON, color));
                                 }
 
