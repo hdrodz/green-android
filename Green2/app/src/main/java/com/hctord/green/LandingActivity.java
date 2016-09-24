@@ -12,7 +12,6 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.Window;
-import android.widget.NumberPicker;
 
 import com.hctord.green.adapters.PixelArtRecyclerAdapter;
 import com.hctord.green.document.DocumentManager;
@@ -66,6 +65,7 @@ public class LandingActivity
         gridView.setAdapter(adapter);
         */
 
+        /*
         NumberPicker widthPicker = (NumberPicker)findViewById(R.id.width_picker);
         NumberPicker heightPicker = (NumberPicker)findViewById(R.id.height_picker);
 
@@ -73,7 +73,7 @@ public class LandingActivity
         widthPicker.setMaxValue(255);
         heightPicker.setMinValue(1);
         heightPicker.setMaxValue(255);
-
+        */
         setupToolbar();
     }
 
@@ -107,7 +107,7 @@ public class LandingActivity
             case R.id.action_settings:
                 return true;
             case R.id.action_new:
-                intent = new Intent(this, EditorActivity.class);
+                intent = new Intent(this, NuEditorActivity.class);
                 intent.putExtra(CommonEditorFragment.ARG_HANDLE, documentManager.createDocument(16, 16));
                 startActivity(intent);
                 return true;

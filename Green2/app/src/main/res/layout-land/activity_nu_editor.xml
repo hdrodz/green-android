@@ -1,10 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/activity_nu_editor"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    tools:context="com.hctord.green.NuEditorActivity">
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="match_parent">
 
     <android.support.v7.widget.Toolbar
         android:id="@+id/toolbar"
@@ -18,35 +15,38 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
 
+
     <LinearLayout
         android:id="@+id/button_bar"
-        android:layout_width="match_parent"
-        android:layout_height="48dp"
+        android:layout_width="48dp"
+        android:layout_height="match_parent"
         android:elevation="10dp"
-        android:layout_alignParentBottom="true"
+        android:layout_below="@id/toolbar"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true"
         android:background="#EEE"
-        android:orientation="horizontal">
+        android:orientation="vertical">
         <ImageButton
             android:background="?attr/actionBarItemBackground"
             android:id="@+id/palette_button"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
+            android:layout_height="0dp"
+            android:layout_width="match_parent"
             android:layout_weight="1"
             android:src="@drawable/ic_action_palette"
             android:tint="#000"/>
         <ImageButton
             android:background="?attr/actionBarItemBackground"
             android:id="@+id/tools_button"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
+            android:layout_height="0dp"
+            android:layout_width="match_parent"
             android:layout_weight="1"
             android:src="@drawable/ic_tool_pencil_white"
             android:tint="#000"/>
         <ImageButton
             android:background="?attr/actionBarItemBackground"
             android:id="@+id/layers_button"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
+            android:layout_height="0dp"
+            android:layout_width="match_parent"
             android:layout_weight="1"
             android:src="@drawable/ic_action_layers"
             android:tint="#000"/>
@@ -56,9 +56,9 @@
         android:layout_width="64dp"
         android:layout_height="64dp"
         android:elevation="5dp"
+        android:layout_toLeftOf="@id/button_bar"
+        android:layout_toStartOf="@id/button_bar"
         android:layout_below="@id/toolbar"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentEnd="true"
         android:src="@drawable/ic_action_redo"
         android:tint="#000"/>
 
@@ -71,8 +71,8 @@
         android:layout_height="match_parent"
         android:layout_width="64dp"
         android:orientation="vertical"
-        android:elevation="20dp"
         android:visibility="gone"
+        android:elevation="20dp"
         android:background="#FFF">
 
         <ImageButton
