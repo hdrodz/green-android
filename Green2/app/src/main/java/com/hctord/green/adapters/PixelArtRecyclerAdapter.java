@@ -23,7 +23,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Created by HéctorD on 6/11/2015.
+ * Created by HÃ©ctorD on 6/11/2015.
  */
 public class PixelArtRecyclerAdapter
     extends RecyclerView.Adapter<PixelArtRecyclerAdapter.ViewHolder> {

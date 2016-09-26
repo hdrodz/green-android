@@ -212,23 +212,23 @@ public class PixelEditorView2
 
         switch (type) {
         case FREEFORM:
-            brush = new Freeform(this, 0, brush instanceof Eraser ? storedColor : brush.getColor());
+            brush = new Freeform(this, editingFrame, brush instanceof Eraser ? storedColor : brush.getColor());
             break;
         case ERASER:
             storedColor = brush.getColor();
-            brush = new Eraser(this, 0);
+            brush = new Eraser(this, editingFrame);
             break;
         case RECT:
-            brush = new Rect(this, 0, brush instanceof Eraser ? storedColor : brush.getColor());
+            brush = new Rect(this, editingFrame, brush instanceof Eraser ? storedColor : brush.getColor());
             break;
         case ELLIPSE:
-            brush = new Ellipse(this, 0, brush instanceof Eraser ? storedColor : brush.getColor());
+            brush = new Ellipse(this, editingFrame, brush instanceof Eraser ? storedColor : brush.getColor());
             break;
         case LINE:
-            brush = new Line(this, 0, brush instanceof Eraser ? storedColor : brush.getColor());
+            brush = new Line(this, editingFrame, brush instanceof Eraser ? storedColor : brush.getColor());
             break;
         case FILL:
-            brush = new Fill(this, 0, brush instanceof Eraser ? storedColor : brush.getColor());
+            brush = new Fill(this, editingFrame, brush instanceof Eraser ? storedColor : brush.getColor());
             break;
         }
     }

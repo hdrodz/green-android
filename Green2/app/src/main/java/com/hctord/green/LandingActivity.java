@@ -108,7 +108,7 @@ public class LandingActivity
                 return true;
             case R.id.action_new:
                 intent = new Intent(this, NuEditorActivity.class);
-                intent.putExtra(CommonEditorFragment.ARG_HANDLE, documentManager.createDocument(16, 16));
+                intent.putExtra(NuEditorActivity.EXTRA_HANDLE, documentManager.createDocument(16, 16));
                 startActivity(intent);
                 return true;
         }
@@ -161,8 +161,8 @@ public class LandingActivity
     public void onRequestOpen(int position) {
         FileScanner.PixelArtHandle handle = adapter.getItem(position);
         DocumentManager.OpenPixelArtInfo info = documentManager.openDocument(handle.getFilename());
-        Intent intent = new Intent(this, EditorActivity.class);
-        intent.putExtra(CommonEditorFragment.ARG_HANDLE, info);
+        Intent intent = new Intent(this, NuEditorActivity.class);
+        intent.putExtra(NuEditorActivity.EXTRA_HANDLE, info);
         startActivity(intent);
     }
 }

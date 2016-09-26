@@ -18,7 +18,7 @@ import java.io.FilenameFilter;
 import java.io.IOException;
 
 /**
- * Created by HéctorD on 6/11/2015.
+ * Created by HÃ©ctorD on 6/11/2015.
  */
 public final class FileScanner {
     private FileScanner() {}
@@ -54,7 +54,7 @@ public final class FileScanner {
             FilenameFilter filter = new FilenameFilter() {
                 @Override
                 public boolean accept(File dir, String filename) {
-                    return !filename.startsWith("$") && filename.endsWith(".green");
+                    return (!filename.startsWith("$") && filename.endsWith(".green"));
                 }
             };
             File[] art = artDir.listFiles(filter);

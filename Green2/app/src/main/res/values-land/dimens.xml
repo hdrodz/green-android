@@ -4,4 +4,6 @@
     <dimen name="palette_popup_offset_y">-112dp</dimen>
 
     <dimen name="popup_palette_height">296dp</dimen>
+    <dimen name="color_picker_width">368dp</dimen>
+    <dimen name="color_picker_height">241dp</dimen>
 </resources>

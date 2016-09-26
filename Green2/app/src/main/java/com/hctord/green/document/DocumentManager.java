@@ -70,6 +70,7 @@ public class DocumentManager {
         openDocuments.add(pixelArt);
         handle.openDocumentIndex = openDocuments.indexOf(pixelArt);
         handle.artHashCode = pixelArt.hashCode();
+        handle.newFile = true;
         openDocumentInfoList.add(handle);
         ++newDocuments;
         openDocumentAdapter.documentAdded();
@@ -92,7 +93,7 @@ public class DocumentManager {
 
     public OpenPixelArtInfo openDocument(String filename) {
         OpenPixelArtInfo info = new OpenPixelArtInfo();
-        info.filename = filename;
+        info.filename = filename.replace(".green", "");
         PixelArt art;
         try {
             FileInputStream fis = context.openFileInput(filename);
@@ -112,8 +113,9 @@ public class DocumentManager {
 
     public void saveDocument(OpenPixelArtInfo info) {
         PixelArt art = openDocuments.get(info.openDocumentIndex);
+        info.newFile = false;
         try {
-            FileOutputStream fos = context.openFileOutput(info.filename, Context.MODE_PRIVATE);
+            FileOutputStream fos = context.openFileOutput(info.filename + ".green", Context.MODE_PRIVATE);
             art.write(fos);
             fos.close();
         }
@@ -134,7 +136,7 @@ public class DocumentManager {
         }
 
         if (oldInfo == null)
-            throw new IllegalArgumentException("Nothing to update!");
+            throw new IllegalArgumentException("No matching info");
 
         oldInfo.filename = newInfo.filename;
     }
@@ -187,16 +189,13 @@ public class DocumentManager {
         return context;
     }
 
-    public OpenDocumentAdapter getOpenDocumentAdapter() {
-        return openDocumentAdapter;
-    }
-
     /**
      *
      */
     public static class OpenPixelArtInfo implements Parcelable {
         private int openDocumentIndex;
         private String filename;
+        private boolean newFile = true;
         private int artHashCode;
         private int averageColorSat;
 
@@ -205,6 +204,7 @@ public class DocumentManager {
         private OpenPixelArtInfo(Parcel in) {
             openDocumentIndex = in.readInt();
             filename = in.readString();
+            newFile = in.readByte() != 0;
         }
 
         public int getOpenDocumentIndex() {
@@ -213,6 +213,10 @@ public class DocumentManager {
 
         public String getFilename() {
             return filename;
+        }
+
+        public boolean isNewFile() {
+            return newFile;
         }
 
         public void setFilename(String filename) {
@@ -228,6 +232,7 @@ public class DocumentManager {
         public void writeToParcel(Parcel out, int flags) {
             out.writeInt(openDocumentIndex);
             out.writeString(filename);
+            out.writeByte((byte)(isNewFile() ? 1 : 0));
         }
 
         public static final Creator<OpenPixelArtInfo> CREATOR = new Creator<OpenPixelArtInfo>() {
@@ -245,11 +250,6 @@ public class DocumentManager {
         public int getAverageColorSat() {
             return averageColorSat;
         }
-    }
-
-    @Deprecated
-    public static interface PostFileScannedListener {
-        public void onFilesScanned();
     }
 
 }

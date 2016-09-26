@@ -19,6 +19,7 @@ import java.util.List;
 /**
  * Adapter for layers n shiiiiiii
  */
+@Deprecated
 public class FrameAdapter extends BaseAdapter {
 
     private Context context;
@@ -68,7 +69,7 @@ public class FrameAdapter extends BaseAdapter {
             bd.setFilterBitmap(false);
             bd.setAntiAlias(false);
             rendererCache.add(bd);
-            if (i > visibleLayers.size())
+            if (i >= visibleLayers.size())
                 visibleLayers.add(true);
         }
     }
@@ -104,7 +105,6 @@ public class FrameAdapter extends BaseAdapter {
             vh = new ViewHolder();
 
             vh.preview = (ImageView)convertView.findViewById(R.id.preview);
-            vh.frameIndicator = (TextView)convertView.findViewById(R.id.layer_name);
 
             convertView.setTag(vh);
         }

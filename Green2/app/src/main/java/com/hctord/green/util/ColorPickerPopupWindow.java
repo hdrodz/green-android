@@ -98,7 +98,8 @@ public class ColorPickerPopupWindow extends PopupWindow {
     private void updateColorPreviews() {
         preview.setBackgroundColor(color);
         preview.invalidate();
-        previewText.setText('#' + Integer.toHexString(color));
+        if (previewText != null)
+            previewText.setText('#' + Integer.toHexString(color).toUpperCase());
     }
 
     private void setup() {
@@ -164,6 +165,7 @@ public class ColorPickerPopupWindow extends PopupWindow {
         bi = color & 0x000000FF;
 
         ai >>= 24;
+        ai &= 0x000000FF; // get rid of prepending FF's
         ri >>= 16;
         gi >>= 8;
 
@@ -188,7 +190,7 @@ public class ColorPickerPopupWindow extends PopupWindow {
         this.listener = listener;
     }
 
-    public static interface OnColorChangedListener {
-        public void onColorChanged(int newColor);
+    public interface OnColorChangedListener {
+        void onColorChanged(int newColor);
     }
 }

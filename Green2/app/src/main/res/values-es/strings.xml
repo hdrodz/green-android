@@ -42,4 +42,18 @@
     <string name="yes">Sí</string>
     <string name="app_author">Creado con amor desde Gurabo, Puerto Rico</string>
     <string name="app_description">Editor de arte de pixeles e imágenes animados.</string>
+    <string name="message_saved">Archivo guardado.</string>
+
+    <string-array name="context_images">
+        <item>Exportar</item>
+        <item>Renombrar</item>
+        <item>Borrar</item>
+    </string-array>
+    <string-array name="layer_view_modes">
+        <item>Manual</item>
+        <item>Active</item>
+        <item>Active +1</item>
+        <item>Active -1</item>
+        <item>Inv. Manual</item>
+    </string-array>
 </resources>

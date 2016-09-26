@@ -16,6 +16,7 @@
     <string name="title_are_you_sure">Are you sure?</string>
     <string name="message_empty_filename">Filename can not be empty.</string>
     <string name="message_delete">This operation can not be undone.</string>
+    <string name="message_saved">File saved.</string>
     <string name="deleted">File deleted successfully.</string>
     <string name="yes">Yes</string>
     <string name="no">No</string>

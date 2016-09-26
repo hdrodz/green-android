@@ -14,6 +14,7 @@ import java.util.List;
 /**
  * Adapter for palettes and shit i guess
  */
+@Deprecated
 public class PaletteAdapter extends BaseAdapter {
 
     private Context context;

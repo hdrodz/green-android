@@ -31,7 +31,7 @@ public class PixelArt
         0x6c, // 'l'
         0x65, // 'e'
         0x73, // 's'
-        0x00  // null terminator to align to 8 bytes
+        0x00  // version code
     };
 
     private Point size;
@@ -150,6 +150,37 @@ public class PixelArt
         return 0xFF000000 | (r << 16) | (g << 8) | b;
     }
 
+    public int getAverageColor(int frame) {
+        long total_r = 0,
+                total_g = 0,
+                total_b = 0;
+        int nontransparent_pixels = 0;
+
+        for (byte pixel : frames.get(frame)) {
+            if (pixel == 0)
+                continue;
+            int rgb = palette.get(pixel);
+            int r, g, b;
+            r = (rgb & 0x00FF0000) >> 16;
+            g = (rgb & 0x0000FF00) >> 8;
+            b = (rgb & 0x000000FF);
+
+            total_r += r;
+            total_g += g;
+            total_b += b;
+            ++nontransparent_pixels;
+        }
+
+        if (nontransparent_pixels == 0)
+            return 0xFF000000;
+
+        int r = (int)(total_r / nontransparent_pixels);
+        int g = (int)(total_g / nontransparent_pixels);
+        int b = (int)(total_b / nontransparent_pixels);
+
+        return 0xFF000000 | (r << 16) | (g << 8) | b;
+    }
+
     public byte[] getFrame(int position) {
         return frames.get(position);
     }
@@ -185,7 +216,8 @@ public class PixelArt
         buffer = new byte[8];
         stream.read(buffer);
         for (int i = 0; i < 8; i++) {
-            if (buffer[i] != FILE_CODE[i]) throw new IllegalArgumentException("Stream is not in correct format.");
+            if (buffer[i] != FILE_CODE[i])
+                throw new IllegalArgumentException("Stream is not in correct format.");
         }
 
         // Read the image size
